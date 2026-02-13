@@ -9,12 +9,21 @@ Built with vanilla HTML/CSS/JS + Node.js WebSocket server. No frameworks, no dat
 <p align="center">
   <img src="docs/screenshots/01-lobby.png" width="200" alt="Lobby">
   <img src="docs/screenshots/02-ready.png" width="200" alt="Ready screen">
-  <img src="docs/screenshots/04-mg1-selected.png" width="200" alt="Mini-game 1">
+  <img src="docs/screenshots/03-mg1.png" width="200" alt="Mini-game 1">
 </p>
 
 <p align="center">
   <img src="docs/screenshots/05-mg2-important.png" width="200" alt="Mini-game 2">
   <img src="docs/screenshots/06-results.png" width="200" alt="Results">
+  <img src="docs/screenshots/08-flip-card.png" width="200" alt="Flip card with city info">
+</p>
+
+### Flip card animation
+
+Each result card can be tapped to reveal detailed city info (pros, cons, nature, typical dishes, and a flight link).
+
+<p align="center">
+  <img src="docs/screenshots/flip-card.gif" width="300" alt="Flip card animation">
 </p>
 
 ## How it works
@@ -79,13 +88,16 @@ a-donde-vamos/
 ## Features
 
 - Mobile-first dark UI with tropical color palette (turquoise, fuchsia, mango)
+- Customizable player names displayed throughout the game
 - Real-time WebSocket sync with server-owned timers
-- Instruction screens before each mini-game
+- Instruction screens with both-players-ready sync before each mini-game
 - +10s timer extension (once per question in MG1)
 - Search/filter in MG2 options
 - 3-tab results view (your top, partner's top, combined)
+- Flip cards with detailed city info: pros, cons, nature, dishes, and Skyscanner flight links
 - Coincidence detection and highlighting
-- Share results via WhatsApp / clipboard
+- WhatsApp share button + clipboard copy for room invites
+- QR code for easy phone-to-phone joining
 - Rematch support
 - 60-second disconnection/reconnection handling
 - All UI text in Spanish
