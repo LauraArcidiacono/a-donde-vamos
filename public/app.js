@@ -16,6 +16,18 @@ import {
   CITY_INFO,
 } from './data.js';
 
+import {
+  initAudio,
+  requestMusicStart,
+  requestMusicStop,
+  playClick,
+  playCelebration,
+  playCountdownBeep,
+  playCountdownGo,
+  startTimerWarning,
+  stopTimerWarning,
+} from './audio.js';
+
 // ============================================================
 // Application State
 // ============================================================
@@ -55,6 +67,8 @@ function haptic(type = 'light') {
   if (navigator.vibrate) {
     navigator.vibrate(type === 'light' ? 10 : 50);
   }
+  // Play subtle click sound on interactions
+  playClick();
 }
 
 // ============================================================
@@ -323,6 +337,9 @@ function showReadyScreen() {
   showScreen('screen-ready');
   state.currentPhase = PHASES.READY;
 
+  // Start background music (from ready screen onwards)
+  requestMusicStart();
+
   // Reset ready indicators
   $('p1-ready').classList.remove('ready');
   $('p2-ready').classList.remove('ready');
@@ -358,12 +375,14 @@ function showCountdown() {
   let count = 3;
   numberEl.textContent = count;
   numberEl.classList.add('animate');
+  playCountdownBeep();
 
   state.countdownTimer = setInterval(() => {
     count--;
     if (count > 0) {
       numberEl.textContent = count;
       haptic();
+      playCountdownBeep();
       // Re-trigger animation
       numberEl.classList.remove('animate');
       void numberEl.offsetWidth; // force reflow
@@ -372,6 +391,7 @@ function showCountdown() {
       clearInterval(state.countdownTimer);
       state.countdownTimer = null;
       overlay.classList.add('hidden');
+      playCountdownGo();
       // Server will send show_instructions or phase_change next
     }
   }, 1000);
@@ -486,6 +506,9 @@ function handlePhaseChange(phase) {
   state.partnerAnswered = false;
   state.answered = false;
   state.currentSelections = [];
+
+  // Stop any active timer warning when changing phases
+  stopTimerWarning();
 
   switch (phase) {
     case PHASES.MG1:
@@ -1033,14 +1056,20 @@ function updateTimerBar(prefix, remaining, total) {
         fill.classList.remove('timer-warning', 'timer-danger');
         if (remaining <= 5) {
           fill.classList.add('timer-danger');
-          // Shake at 5 seconds
+          // Start urgency sound and shake at 5 seconds
           if (remaining === 5) {
             timerBarEl.classList.add('shake');
             haptic('heavy');
+            startTimerWarning();
             setTimeout(() => timerBarEl.classList.remove('shake'), 500);
           }
         } else if (remaining <= 10) {
           fill.classList.add('timer-warning');
+        }
+
+        // Stop timer warning when timer resets or finishes
+        if (remaining > 5 || remaining <= 0) {
+          stopTimerWarning();
         }
       });
     }
@@ -1107,6 +1136,10 @@ function showResults(results) {
   state.currentPhase = PHASES.RESULTS;
   showScreen('screen-results');
   haptic('heavy');
+
+  // Stop timer warning if active, play celebration fanfare
+  stopTimerWarning();
+  playCelebration();
 
   // Render tabs content
   const p1Cities = (results.player1 && results.player1.top4) || results.player1 || [];
@@ -1502,6 +1535,10 @@ function setupErrorOverlay() {
     haptic();
     $('overlay-error').classList.add('hidden');
 
+    // Stop music and any active sounds when returning to lobby
+    requestMusicStop();
+    stopTimerWarning();
+
     // Clean up state
     state.roomCode = null;
     state.playerId = null;
@@ -1622,6 +1659,9 @@ function handleURLParams() {
 // ============================================================
 
 function init() {
+  // Initialize audio engine (creates mute button, sets up interaction listeners)
+  initAudio();
+
   // Connect WebSocket
   connectWS();
 
