@@ -258,6 +258,26 @@ body {
   pointer-events: none;
 }
 
+.btn-whatsapp {
+  padding: 12px 24px;
+  background: #25D366;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+}
+
+.btn-whatsapp:hover {
+  background: #20bd5a;
+}
+
+.share-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+
 .btn-ghost {
   padding: 10px 20px;
   background: transparent;

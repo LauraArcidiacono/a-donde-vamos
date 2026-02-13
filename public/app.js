@@ -254,11 +254,15 @@ function handleRoomCreated(data) {
   // Generate QR code
   const joinUrl = `${location.origin}${location.pathname}?room=${data.code}`;
   const canvas = $('qr-code');
+  const qrWrapper = canvas.closest('.qr-wrapper');
   if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
     QRCode.toCanvas(canvas, joinUrl, {
       width: 200,
       color: { dark: '#1C1917', light: '#FFFFFF' },
     });
+    if (qrWrapper) qrWrapper.classList.remove('hidden');
+  } else {
+    if (qrWrapper) qrWrapper.classList.add('hidden');
   }
 
   // Update status
@@ -270,22 +274,18 @@ function handleRoomCreated(data) {
 }
 
 function setupShareLink(url) {
+  // WhatsApp direct link
+  $('btn-share-whatsapp').addEventListener('click', () => {
+    haptic();
+    const text = encodeURIComponent(`\u00A1Elige destino de viaje conmigo! \u{1F30D}\n${url}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  });
+
+  // Copy link fallback
   $('btn-share-link').addEventListener('click', async () => {
     haptic();
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'A Donde Vamos?',
-          text: 'Unete a mi sala para elegir destino de viaje!',
-          url,
-        });
-      } catch {
-        // User cancelled share, ignore
-      }
-    } else {
-      await copyToClipboard(url);
-      showToast('Link copiado al portapapeles');
-    }
+    await copyToClipboard(url);
+    showToast('Link copiado al portapapeles');
   });
 }
 
