@@ -142,6 +142,9 @@ function routeMessage(msg) {
     case MSG.PHASE_CHANGE:
       handlePhaseChange(msg.phase);
       break;
+    case 'partner_instructions_ready':
+      showPartnerInstructionsReady();
+      break;
     case MSG.QUESTION:
       showQuestion(msg);
       break;
@@ -390,6 +393,7 @@ function showInstructions(phase) {
   if (!instr) return;
 
   showScreen('screen-instructions');
+  state.instructionsSent = false;
 
   $('instr-icon').textContent = instr.icon;
   $('instr-title').textContent = instr.title;
@@ -403,6 +407,15 @@ function showInstructions(phase) {
     rulesEl.appendChild(li);
   });
 
+  // Reset button state
+  const btn = $('btn-instr-next');
+  btn.disabled = false;
+  btn.textContent = 'Siguiente';
+
+  // Hide partner waiting status
+  const waitingEl = $('instr-partner-status');
+  if (waitingEl) waitingEl.classList.add('hidden');
+
   // Auto-advance countdown
   let countdownSec = 5;
   const countdownSpan = $('instr-countdown');
@@ -415,25 +428,41 @@ function showInstructions(phase) {
     countdownSpan.textContent = countdownSec;
     if (countdownSec <= 0) {
       clearTimers();
-      send({ type: 'instructions_done', phase });
+      sendInstructionsDone();
     }
   }, 1000);
 }
 
+function sendInstructionsDone() {
+  if (state.instructionsSent) return;
+  state.instructionsSent = true;
+  send({ type: 'instructions_done', phase: state.currentPhase });
+
+  // Show waiting state
+  const btn = $('btn-instr-next');
+  btn.disabled = true;
+  btn.textContent = 'Esperando...';
+
+  if (!state.soloMode) {
+    const waitingEl = $('instr-partner-status');
+    if (waitingEl) waitingEl.classList.remove('hidden');
+  }
+}
+
+function showPartnerInstructionsReady() {
+  // Partner clicked next - if we haven't clicked yet, just show a subtle indicator
+  const waitingEl = $('instr-partner-status');
+  if (waitingEl && !state.instructionsSent) {
+    waitingEl.classList.remove('hidden');
+    waitingEl.textContent = 'El otro jugador ya est\u00E1 listo';
+  }
+}
+
 function setupInstructions() {
-  // Click/tap to dismiss early
   $('btn-instr-next').addEventListener('click', () => {
     haptic();
     clearTimers();
-    send({ type: 'instructions_done', phase: state.currentPhase });
-  });
-
-  $('screen-instructions').addEventListener('click', (e) => {
-    // Only if not clicking the button itself
-    if (e.target.id !== 'btn-instr-next') {
-      clearTimers();
-      send({ type: 'instructions_done', phase: state.currentPhase });
-    }
+    sendInstructionsDone();
   });
 }
 

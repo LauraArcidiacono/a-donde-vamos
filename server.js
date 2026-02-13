@@ -223,7 +223,9 @@ function createRoom(soloMode = false) {
     botMode: soloMode,
     rematchRequests: new Set(),
     reconnectTimers: new Map(),
-    aborted: false
+    aborted: false,
+    instructionsReady: new Set(),
+    instructionsTimer: null
   };
   rooms.set(code, room);
   return room;
@@ -374,29 +376,66 @@ function startMiniGame(room, phase) {
   if (room.aborted) return;
 
   room.phase = PHASES.INSTRUCTIONS;
+  room.instructionsReady.clear();
+  room.pendingPhase = phase;
   broadcast(room, MSG.SHOW_INSTRUCTIONS, { phase });
 
-  // Wait for instructions display, then start the actual mini-game
-  setTimeout(() => {
-    if (room.aborted) return;
-    room.phase = phase;
-    broadcast(room, MSG.PHASE_CHANGE, { phase });
-
-    switch (phase) {
-      case PHASES.MG1:
-        startMG1(room);
-        break;
-      case PHASES.MG2_IMPORTANT:
-        startMG2Important(room);
-        break;
-      case PHASES.MG2_NOWANT:
-        startMG2NoWant(room);
-        break;
-      case PHASES.MG3:
-        startMG3(room);
-        break;
-    }
+  // Auto-advance after timeout (fallback if players don't click)
+  if (room.instructionsTimer) clearTimeout(room.instructionsTimer);
+  room.instructionsTimer = setTimeout(() => {
+    advanceFromInstructions(room);
   }, TIMERS.INSTRUCTIONS * 1000);
+}
+
+function advanceFromInstructions(room) {
+  if (room.aborted || room.phase !== PHASES.INSTRUCTIONS) return;
+  if (room.instructionsTimer) {
+    clearTimeout(room.instructionsTimer);
+    room.instructionsTimer = null;
+  }
+
+  const phase = room.pendingPhase;
+  room.phase = phase;
+  broadcast(room, MSG.PHASE_CHANGE, { phase });
+
+  switch (phase) {
+    case PHASES.MG1:
+      startMG1(room);
+      break;
+    case PHASES.MG2_IMPORTANT:
+      startMG2Important(room);
+      break;
+    case PHASES.MG2_NOWANT:
+      startMG2NoWant(room);
+      break;
+    case PHASES.MG3:
+      startMG3(room);
+      break;
+  }
+}
+
+function handleInstructionsDone(room, player) {
+  if (room.phase !== PHASES.INSTRUCTIONS) return;
+  room.instructionsReady.add(player.id);
+
+  // Notify the other player that this one is ready
+  room.players.forEach(p => {
+    if (p.id !== player.id && !p.isBot) {
+      send(p.ws, 'partner_instructions_ready', {});
+    }
+  });
+
+  // Bot auto-readies
+  if (room.botMode) {
+    const bot = room.players.find(p => p.isBot);
+    if (bot) room.instructionsReady.add(bot.id);
+  }
+
+  // If both players ready, advance immediately
+  const humanAndBotCount = room.players.length;
+  if (room.instructionsReady.size >= humanAndBotCount) {
+    advanceFromInstructions(room);
+  }
 }
 
 // --- MG1: Emotional Test (one question at a time) ---
@@ -1474,9 +1513,13 @@ function handleMessage(ws, rawData) {
       break;
     }
 
-    case 'instructions_done':
-      // Client signals it finished the instruction screen; server drives timing, so ignore
+    case 'instructions_done': {
+      const { room: instrRoom, player: instrPlayer } = findRoomByWs(ws);
+      if (instrRoom && instrPlayer) {
+        handleInstructionsDone(instrRoom, instrPlayer);
+      }
       break;
+    }
 
     default:
       sendError(ws, `Tipo de mensaje desconocido: ${type}`);
