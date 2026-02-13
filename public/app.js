@@ -13,7 +13,7 @@ import {
   INSTRUCTIONS,
   CITIES,
   TAG_LABELS,
-  SCORING_WEIGHTS,
+  CITY_INFO,
 } from './data.js';
 
 // ============================================================
@@ -1098,7 +1098,8 @@ function showResults(results) {
   renderPenalties(allPenalties);
 
   // Set default tab to combined
-  activateTab('combined');
+  // Set default tab to player's own results
+  activateTab('p1');
 
   // Setup tab switching
   setupResultsTabs();
@@ -1175,8 +1176,78 @@ function renderResultsPanel(panelId, cities, coincidences) {
     info.appendChild(scoreLabel);
     info.appendChild(tagsRow);
 
-    card.appendChild(rank);
-    card.appendChild(info);
+    // Inner wrapper for flip
+    const inner = document.createElement('div');
+    inner.className = 'result-card-inner';
+
+    // Front face (existing content)
+    const front = document.createElement('div');
+    front.className = 'result-card-front';
+    front.appendChild(rank);
+    front.appendChild(info);
+
+    // Back face (city info)
+    const back = document.createElement('div');
+    back.className = 'result-card-back';
+
+    const cityInfo = CITY_INFO[entry.cityId];
+    if (cityInfo) {
+      const sections = [
+        { key: 'pros', title: '\u{1F44D} Lo mejor', cssClass: 'pros' },
+        { key: 'cons', title: '\u{1F44E} Lo peor', cssClass: 'cons' },
+        { key: 'nature', title: '\u{1F33F} Naturaleza cerca', cssClass: 'nature' },
+        { key: 'dishes', title: '\u{1F37D}\uFE0F Platos t\u00EDpicos', cssClass: 'dishes' },
+      ];
+
+      sections.forEach(({ key, title, cssClass }) => {
+        const items = cityInfo[key];
+        if (items && items.length > 0) {
+          const section = document.createElement('div');
+          section.className = `city-info-section ${cssClass}`;
+          const h5 = document.createElement('h5');
+          h5.textContent = title;
+          section.appendChild(h5);
+          items.forEach(item => {
+            const p = document.createElement('div');
+            p.className = 'city-info-item';
+            p.textContent = item;
+            section.appendChild(p);
+          });
+          back.appendChild(section);
+        }
+      });
+      // Flight link
+      if (cityInfo.flights) {
+        const flightLink = document.createElement('a');
+        flightLink.className = 'city-flight-link';
+        flightLink.href = cityInfo.flights;
+        flightLink.target = '_blank';
+        flightLink.rel = 'noopener noreferrer';
+        flightLink.innerHTML = '\u2708\uFE0F Ver vuelos';
+        flightLink.addEventListener('click', (e) => e.stopPropagation());
+        back.appendChild(flightLink);
+      }
+    } else {
+      const noInfo = document.createElement('p');
+      noInfo.textContent = 'Info no disponible';
+      noInfo.style.color = 'rgba(255,255,255,0.5)';
+      back.appendChild(noInfo);
+    }
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    card.appendChild(inner);
+
+    // Add flip hint under the front
+    const hint = document.createElement('div');
+    hint.className = 'flip-hint';
+    hint.innerHTML = 'Toca para ver m\u00E1s info <span class="flip-hint-icon">\u2192</span>';
+    front.appendChild(hint);
+
+    // Click to flip
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
 
     panel.appendChild(card);
   });

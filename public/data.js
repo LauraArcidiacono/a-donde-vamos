@@ -122,6 +122,114 @@ export const CITIES = [
   }
 ];
 
+export const CITY_INFO = {
+  bilbao: {
+    pros: ['Muy buena gastronomía local', 'Ciudad cómoda para caminar', 'Buena base para excursiones cortas', 'Sensación auténtica'],
+    cons: ['Clima inestable y lluvioso', 'No tiene un gran casco histórico monumental', 'En pocos días se recorre bastante'],
+    nature: ['Costa y playas: 15–25 km', 'Acantilados vascos: 30–40 km', 'Montaña (Urkiola): ~40 km'],
+    dishes: ['Pintxos variados', 'Bacalao a la vizcaína', 'Txuleton', 'Tarta de queso vasca'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/bio/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  a_coruna: {
+    pros: ['Muy auténtica y poco turística', 'Mar muy presente en la ciudad', 'Paseos marítimos muy bonitos', 'Excelente marisco'],
+    cons: ['Clima ventoso y cambiante', 'Menos "atractivos icónicos"', 'Sensación más tranquila'],
+    nature: ['Playas urbanas dentro de la ciudad', 'Costa salvaje y acantilados: 20–60 km', 'Costa da Morte: 60–90 km'],
+    dishes: ['Pulpo a la gallega', 'Empanada gallega', 'Mariscos (percebes, centollo)', 'Tarta de Santiago'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/lcg/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  santander: {
+    pros: ['Muy elegante y agradable para pasear', 'Playas dentro de la ciudad', 'Entorno natural muy bonito'],
+    cons: ['Clima impredecible', 'Se recorre bastante rápido', 'Más enfocada al paisaje que a monumentos'],
+    nature: ['Playas urbanas', 'Acantilados costeros: 10–30 km', 'Picos de Europa: ~100 km'],
+    dishes: ['Rabas (calamares fritos)', 'Anchoas del Cantábrico', 'Cocido montañés', 'Quesada pasiega'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/sdr/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  palma: {
+    pros: ['Casco antiguo muy bonito', 'Mar y naturaleza muy cerca', 'Buen equilibrio entre ciudad y paisaje'],
+    cons: ['Algunas zonas muy turísticas', 'Para ver lo mejor, ayuda moverse'],
+    nature: ['Calas y playas: 5–30 km', 'Sierra de Tramuntana: ~25 km', 'Pueblos de montaña: 20–40 km'],
+    dishes: ['Ensaimada', 'Sobrasada', 'Tumbet', 'Arroz brut'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/pmi/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  menorca: {
+    pros: ['Naturaleza muy bien conservada', 'Calas espectaculares', 'Ritmo muy tranquilo'],
+    cons: ['Necesidad de moverse para conocer la isla', 'Menos variedad urbana', 'Mar aún frío en abril'],
+    nature: ['Calas por toda la isla: 5–40 km', 'Acantilados y senderos costeros', 'Camí de Cavalls (ruta natural)'],
+    dishes: ['Caldereta de langosta', 'Queso de Mahón', 'Sobrasada menorquina', 'Pastissets'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/mah/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  paris: {
+    pros: ['Muy bonita para caminar sin rumbo', 'Arquitectura y calles muy especiales', 'Paseos junto al Sena'],
+    cons: ['Mucha gente', 'Precios altos', 'Ritmo más intenso'],
+    nature: ['Río Sena dentro de la ciudad', 'Grandes parques urbanos', 'Jardines de Versalles: ~20 km'],
+    dishes: ['Croissants', 'Crepes', 'Boeuf bourguignon', 'Quesos franceses'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/pari/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439',
+  },
+  lyon: {
+    pros: ['Muy gastronómica', 'Casco antiguo bonito', 'Sensación auténtica'],
+    cons: ['Menos impactante visualmente que París', 'Centro relativamente compacto'],
+    nature: ['Ríos Ródano y Saona', 'Colinas dentro de la ciudad', 'Región vinícola Beaujolais: ~30 km'],
+    dishes: ['Quenelles', 'Saucisson lyonnais', 'Gratin dauphinois'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/lys/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  nantes: {
+    pros: ['Muy verde y relajada', 'Poco turismo internacional', 'Paseos junto al río'],
+    cons: ['Menos espectacular', 'Más discreta visualmente'],
+    nature: ['Río Loira dentro de la ciudad', 'Costa atlántica: ~50–60 km'],
+    dishes: ['Mariscos', 'Mejillones', 'Crepes bretonas'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/nte/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  toulouse: {
+    pros: ['Muy agradable y auténtica', 'Arquitectura rosada única', 'Ritmo tranquilo'],
+    cons: ['Centro no muy grande', 'Menos conocida'],
+    nature: ['Río Garona', 'Canal du Midi', 'Pirineos: ~100–150 km'],
+    dishes: ['Cassoulet', 'Foie gras', 'Salchichas de Toulouse'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/tls/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  estrasburgo: {
+    pros: ['Muy pintoresca', 'Canales y casas tradicionales', 'Muy agradable para caminar'],
+    cons: ['Ciudad pequeña', 'Puede ser cara'],
+    nature: ['Río Rin', 'Campos de Alsacia: 20–40 km', 'Montañas Vosgos: ~60 km'],
+    dishes: ['Flammkuchen', 'Chucrut alsaciano', 'Salchichas'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/sxb/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439&preferdirects=false',
+  },
+  bolonia: {
+    pros: ['Una de las mejores ciudades para comer en Italia', 'Muy auténtica', 'Calles porticadas perfectas para pasear'],
+    cons: ['Menos icónica visualmente', 'Se recorre rápido'],
+    nature: ['Colinas cercanas: 5–15 km', 'Apeninos: ~60–90 km'],
+    dishes: ['Tagliatelle al ragù', 'Tortellini', 'Lasaña', 'Mortadela'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/blq/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439',
+  },
+  turin: {
+    pros: ['Ciudad elegante', 'Muy cerca de los Alpes', 'Ambiente tranquilo'],
+    cons: ['Más sobria que otras ciudades italianas', 'Clima algo fresco en primavera'],
+    nature: ['Alpes: 40–80 km', 'Viñedos del Piamonte: 30–60 km'],
+    dishes: ['Risotto al Barolo', 'Vitello tonnato', 'Agnolotti', 'Chocolate piamontés'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/trn/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439',
+  },
+  ginebra: {
+    pros: ['Lago muy bonito', 'Montañas muy cerca', 'Sensación de calma'],
+    cons: ['Muy cara', 'Se recorre rápido'],
+    nature: ['Lago Lemán en la ciudad', 'Alpes: 60–120 km', 'Mont Blanc (Chamonix): ~80 km'],
+    dishes: ['Fondue', 'Raclette', 'Rösti', 'Chocolate suizo'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/gva/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439',
+  },
+  praga: {
+    pros: ['Muy bonita visualmente', 'Perfecta para pasear', 'Mucha personalidad'],
+    cons: ['Zonas muy turísticas', 'Clima fresco'],
+    nature: ['Río Moldava', 'Parques urbanos', 'Naturaleza en Bohemia: 60–130 km'],
+    dishes: ['Goulash', 'Cerdo asado con knedlíky', 'Sopas tradicionales', 'Strudel'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/prg/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439',
+  },
+  sofia: {
+    pros: ['Muy auténtica', 'Poco turística', 'Montaña muy cerca'],
+    cons: ['Menos impactante visualmente', 'Centro relativamente pequeño'],
+    nature: ['Montaña Vitosha: 10–20 km', 'Senderismo cercano', 'Monasterio de Rila: ~120 km'],
+    dishes: ['Banitsa', 'Shopska salad', 'Kebapche', 'Guisos tradicionales'],
+    flights: 'https://www.skyscanner.es/transporte/vuelos/agp/sof/260401/260405/?adultsv2=2&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&departure-times=1050-1439,720-1439',
+  },
+};
+
 // ============================================================
 // Mini-Game 1: Emotional Test - Questions
 // ============================================================
