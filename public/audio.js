@@ -265,6 +265,150 @@ function stopMusic() {
 }
 
 // ============================================================
+// Results Music - Calm, warm ambient loop
+// Peaceful and togetherness-evoking
+// ============================================================
+
+let resultsPlaying = false;
+let resultsNodes = [];
+
+function startResultsMusic() {
+  if (resultsPlaying) return;
+
+  ensureContext();
+  resumeContext();
+
+  resultsPlaying = true;
+
+  // Slower tempo, peaceful
+  const bpm = 72;
+  const beatDur = 60 / bpm;
+  const barDur = beatDur * 4;
+  const loopBars = 4;
+  const loopDur = barDur * loopBars;
+
+  // Warm chord progression: Cmaj7 → Fmaj7 → Am7 → G
+  const chords = [
+    [261.63, 329.63, 392, 493.88],   // Cmaj7
+    [349.23, 440, 523.25, 659.25],    // Fmaj7
+    [220, 261.63, 329.63, 392],       // Am7
+    [196, 247, 293.66, 392],          // G
+  ];
+
+  // Gentle pentatonic melody: slow, airy
+  const melodyNotes = [
+    523.25, 0, 659.25, 0, 587.33, 0, 523.25, 0,   // C5 rest E5 rest D5 rest C5 rest
+    440, 0, 523.25, 0, 587.33, 0, 659.25, 0,       // A4 rest C5 rest D5 rest E5 rest
+  ];
+
+  function scheduleLoop() {
+    if (!resultsPlaying) return;
+
+    const now = audioCtx.currentTime;
+
+    // --- Warm pad chords (sine + triangle layered, very soft) ---
+    chords.forEach((chord, chordIdx) => {
+      chord.forEach((freq) => {
+        // Sine layer
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.value = freq / 2; // lower octave for warmth
+        filter.type = 'lowpass';
+        filter.frequency.value = 500;
+        gain.gain.value = 0;
+
+        const start = now + chordIdx * barDur;
+        const dur = barDur * 0.95;
+
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.06, start + 0.4);
+        gain.gain.setValueAtTime(0.06, start + dur * 0.7);
+        gain.gain.linearRampToValueAtTime(0, start + dur);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(musicGain);
+        osc.start(start);
+        osc.stop(start + dur + 0.05);
+
+        resultsNodes.push(osc, gain, filter);
+
+        // Triangle layer (slightly higher, adds shimmer)
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+
+        osc2.type = 'triangle';
+        osc2.frequency.value = freq;
+        gain2.gain.value = 0;
+
+        gain2.gain.setValueAtTime(0, start);
+        gain2.gain.linearRampToValueAtTime(0.025, start + 0.5);
+        gain2.gain.setValueAtTime(0.025, start + dur * 0.6);
+        gain2.gain.linearRampToValueAtTime(0, start + dur);
+
+        osc2.connect(gain2);
+        gain2.connect(musicGain);
+        osc2.start(start);
+        osc2.stop(start + dur + 0.05);
+
+        resultsNodes.push(osc2, gain2);
+      });
+    });
+
+    // --- Gentle melody (sine, sparse, dreamy) ---
+    melodyNotes.forEach((freq, i) => {
+      if (freq === 0) return; // rest
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.value = 0;
+
+      const noteSpacing = loopDur / melodyNotes.length;
+      const start = now + i * noteSpacing;
+      const dur = noteSpacing * 1.5;
+
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.08, start + 0.05);
+      gain.gain.setValueAtTime(0.08, start + dur * 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+      osc.connect(gain);
+      gain.connect(musicGain);
+      osc.start(start);
+      osc.stop(start + dur + 0.05);
+
+      resultsNodes.push(osc, gain);
+    });
+
+    // Schedule next loop
+    const nextTime = (loopDur * 1000) - 50;
+    setTimeout(scheduleLoop, nextTime);
+  }
+
+  scheduleLoop();
+}
+
+function stopResultsMusic() {
+  resultsPlaying = false;
+
+  resultsNodes.forEach((node) => {
+    try {
+      if (node.stop) node.stop();
+      if (node.disconnect) node.disconnect();
+    } catch {
+      // Already stopped
+    }
+  });
+  resultsNodes = [];
+}
+
+// ============================================================
 // Sound Effects
 // ============================================================
 
@@ -342,29 +486,32 @@ function stopTimerWarning() {
 }
 
 /**
- * Celebration fanfare for results reveal
+ * Celebration sound for results reveal
+ * Calm, warm, peaceful - evoking togetherness and shared joy
  */
 function playCelebration() {
   ensureContext();
   resumeContext();
 
-  const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
   const now = audioCtx.currentTime;
+
+  // Warm rising arpeggio: Cmaj7 voiced gently (C4, E4, G4, B4, C5)
+  const notes = [261.63, 329.63, 392, 493.88, 523.25];
 
   notes.forEach((freq, i) => {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    osc.type = 'triangle';
+    osc.type = 'sine';
     osc.frequency.value = freq;
     gain.gain.value = 0;
 
-    const start = now + i * 0.12;
-    const dur = 0.4;
+    const start = now + i * 0.25;
+    const dur = 1.8 - i * 0.15;
 
     gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(0.35, start + 0.02);
-    gain.gain.setValueAtTime(0.35, start + dur * 0.4);
+    gain.gain.linearRampToValueAtTime(0.2, start + 0.08);
+    gain.gain.setValueAtTime(0.2, start + dur * 0.5);
     gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
 
     osc.connect(gain);
@@ -373,27 +520,50 @@ function playCelebration() {
     osc.stop(start + dur + 0.05);
   });
 
-  // Add a shimmer/sparkle layer
-  for (let i = 0; i < 6; i++) {
+  // Soft pad layer: warm sustained chord (C + G, low)
+  [130.81, 196].forEach((freq) => {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
 
-    osc.type = 'sine';
-    osc.frequency.value = 1500 + Math.random() * 2000;
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    filter.type = 'lowpass';
+    filter.frequency.value = 600;
     gain.gain.value = 0;
 
-    const start = now + 0.3 + i * 0.08;
-    const dur = 0.15;
+    const start = now + 0.3;
+    const dur = 2.5;
 
     gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(0.1, start + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    gain.gain.linearRampToValueAtTime(0.12, start + 0.3);
+    gain.gain.setValueAtTime(0.12, start + dur * 0.6);
+    gain.gain.linearRampToValueAtTime(0, start + dur);
 
-    osc.connect(gain);
+    osc.connect(filter);
+    filter.connect(gain);
     gain.connect(sfxGain);
     osc.start(start);
-    osc.stop(start + dur + 0.02);
-  }
+    osc.stop(start + dur + 0.05);
+  });
+
+  // Gentle chime at the end
+  const chime = audioCtx.createOscillator();
+  const chimeGain = audioCtx.createGain();
+
+  chime.type = 'sine';
+  chime.frequency.value = 1046.5; // C6
+  chimeGain.gain.value = 0;
+
+  const chimeStart = now + 1.4;
+  chimeGain.gain.setValueAtTime(0, chimeStart);
+  chimeGain.gain.linearRampToValueAtTime(0.1, chimeStart + 0.02);
+  chimeGain.gain.exponentialRampToValueAtTime(0.001, chimeStart + 1.2);
+
+  chime.connect(chimeGain);
+  chimeGain.connect(sfxGain);
+  chime.start(chimeStart);
+  chime.stop(chimeStart + 1.3);
 }
 
 /**
@@ -504,6 +674,17 @@ export function requestMusicStart() {
 export function requestMusicStop() {
   pendingMusicStart = false;
   stopMusic();
+}
+
+export function requestResultsMusic() {
+  stopMusic();
+  startResultsMusic();
+}
+
+export function stopAllMusic() {
+  pendingMusicStart = false;
+  stopMusic();
+  stopResultsMusic();
 }
 
 export { playClick, playCelebration, playCountdownBeep, playCountdownGo };

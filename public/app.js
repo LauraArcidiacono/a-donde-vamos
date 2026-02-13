@@ -20,6 +20,7 @@ import {
   initAudio,
   requestMusicStart,
   requestMusicStop,
+  requestResultsMusic,
   playClick,
   playCelebration,
   playCountdownBeep,
@@ -1137,8 +1138,9 @@ function showResults(results) {
   showScreen('screen-results');
   haptic('heavy');
 
-  // Stop timer warning if active, play celebration fanfare
+  // Stop game music and timer warning, switch to calm results music
   stopTimerWarning();
+  requestResultsMusic();
   playCelebration();
 
   // Render tabs content
@@ -1652,6 +1654,7 @@ function handleURLParams() {
       state.ws.addEventListener('open', onOpen);
     }
   }
+
 }
 
 // ============================================================
