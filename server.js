@@ -137,9 +137,9 @@ const EPSILON = 0.0001;
 // Timer durations (seconds)
 const TIMERS = {
   MG1_PER_QUESTION: 20,
-  MG2_IMPORTANT: 75,
-  MG2_NOWANT: 75,
-  MG3: 90,
+  MG2_IMPORTANT: 40,
+  MG2_NOWANT: 40,
+  MG3: 40,
   INSTRUCTIONS: 5,
   COUNTDOWN_AFTER_READY: 3,
   RECONNECT: 60,
@@ -1355,8 +1355,12 @@ function handleMessage(ws, rawData) {
         soloMode: true
       });
 
-      // Notify player count
-      send(ws, MSG.PLAYER_JOINED, { playerCount: 2 });
+      // Notify player count with names
+      send(ws, MSG.PLAYER_JOINED, {
+        playerCount: 2,
+        player1Name: player.name,
+        player2Name: bot.name
+      });
 
       // Bot auto-readies after delay
       setTimeout(() => {
@@ -1406,8 +1410,13 @@ function handleMessage(ws, rawData) {
         soloMode: false
       });
 
-      // Notify all players of the new count
-      broadcast(room, MSG.PLAYER_JOINED, { playerCount: room.players.length });
+      // Notify all players of the new count (include names when both are present)
+      const joinData = { playerCount: room.players.length };
+      if (room.players.length === 2) {
+        joinData.player1Name = room.players[0].name;
+        joinData.player2Name = room.players[1].name;
+      }
+      broadcast(room, MSG.PLAYER_JOINED, joinData);
       break;
     }
 

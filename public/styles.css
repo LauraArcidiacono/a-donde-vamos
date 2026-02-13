@@ -1525,3 +1525,29 @@ input[type="range"]::-webkit-slider-runnable-track {
     background: var(--bg-dark);
   }
 }
+
+/* ========================================
+   Name Input (Lobby)
+   ======================================== */
+
+.name-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: var(--text-light, #F5F5F4);
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.name-input:focus {
+  border-color: var(--primary, #14B8A6);
+}
+
+.name-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}

@@ -203,20 +203,20 @@ function showScreen(screenId) {
 function setupLobby() {
   $('btn-create').addEventListener('click', () => {
     haptic();
-    send({ type: MSG.CREATE_ROOM });
+    send({ type: MSG.CREATE_ROOM, name: $('input-name').value.trim() || 'Jugador 1' });
   });
 
   $('btn-solo').addEventListener('click', () => {
     haptic();
     state.soloMode = true;
-    send({ type: MSG.CREATE_SOLO });
+    send({ type: MSG.CREATE_SOLO, name: $('input-name').value.trim() || 'Jugador 1' });
   });
 
   $('btn-join').addEventListener('click', () => {
     haptic();
     const code = $('input-code').value.trim().toUpperCase();
     if (code.length === 4) {
-      send({ type: MSG.JOIN_ROOM, code });
+      send({ type: MSG.JOIN_ROOM, code, name: $('input-name').value.trim() || 'Jugador 2' });
     }
   });
 
@@ -240,6 +240,7 @@ function setupLobby() {
 function handleRoomCreated(data) {
   state.roomCode = data.code;
   state.playerId = data.playerId;
+  state.playerName = data.name || $('input-name').value.trim() || 'Jugador 1';
 
   showScreen('screen-waiting');
   state.currentPhase = PHASES.LOBBY;
@@ -288,7 +289,20 @@ function setupShareLink(url) {
 function handlePlayerJoined(data) {
   state.playerId = data.playerId || state.playerId;
 
+  // Store partner name for results tab label
+  if (data.player1Name) state.player1Name = data.player1Name;
+  if (data.player2Name) state.player2Name = data.player2Name;
+  if (data.partnerName) state.partnerName = data.partnerName;
+
   if (data.playerCount === 2 || data.phase === PHASES.READY) {
+    // Update player name displays if available
+    if (data.player1Name && $('p1-name')) {
+      $('p1-name').textContent = data.player1Name || 'Jugador 1';
+    }
+    if (data.player2Name && $('p2-name')) {
+      $('p2-name').textContent = data.player2Name || 'Jugador 2';
+    }
+
     // Both players present, move to ready screen
     showReadyScreen();
   } else {

@@ -273,7 +273,7 @@ export const INSTRUCTIONS = {
     rules: [
       'Primero: elige exactamente 3 cosas MUY importantes para ti',
       'Después: elige exactamente 3 cosas que NO quieres',
-      'Tienes 75 segundos para cada parte',
+      'El tiempo se muestra en pantalla',
       'Puedes buscar opciones con el buscador'
     ],
     icon: '⚖️'
@@ -284,7 +284,7 @@ export const INSTRUCTIONS = {
     rules: [
       'Puntúa la importancia de cada categoría',
       '1 = poco importante, 5 = imprescindible',
-      'Tienes 90 segundos en total',
+      'El tiempo se muestra en pantalla',
       'Si se acaba el tiempo, se guardan tus valores actuales'
     ],
     icon: '🎚️'

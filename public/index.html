@@ -27,6 +27,7 @@
         </div>
 
         <div class="lobby-actions">
+          <input type="text" id="input-name" class="name-input" placeholder="Tu nombre" maxlength="15" autocomplete="off">
           <button id="btn-create" class="btn btn-primary">Crear sala</button>
 
           <button id="btn-solo" class="btn btn-small btn-ghost">Modo prueba</button>
@@ -100,11 +101,11 @@
         <div class="ready-indicators">
           <div class="ready-player">
             <div id="p1-ready" class="ready-dot"></div>
-            <span class="ready-player-label">Jugador 1</span>
+            <span class="ready-player-label"><span id="p1-name">Jugador 1</span></span>
           </div>
           <div class="ready-player">
             <div id="p2-ready" class="ready-dot"></div>
-            <span class="ready-player-label">Jugador 2</span>
+            <span class="ready-player-label"><span id="p2-name">Jugador 2</span></span>
           </div>
         </div>
 
@@ -178,7 +179,7 @@
           <div id="mg2i-timer-bar" class="timer-bar">
             <div class="timer-bar-fill" style="width: 100%"></div>
           </div>
-          <span id="mg2i-timer" class="timer-number">75</span>
+          <span id="mg2i-timer" class="timer-number">40</span>
         </div>
 
         <div class="search-wrapper">
@@ -215,7 +216,7 @@
           <div id="mg2n-timer-bar" class="timer-bar">
             <div class="timer-bar-fill" style="width: 100%"></div>
           </div>
-          <span id="mg2n-timer" class="timer-number">75</span>
+          <span id="mg2n-timer" class="timer-number">40</span>
         </div>
 
         <div class="search-wrapper">
@@ -252,7 +253,7 @@
           <div id="mg3-timer-bar" class="timer-bar">
             <div class="timer-bar-fill" style="width: 100%"></div>
           </div>
-          <span id="mg3-timer" class="timer-number">90</span>
+          <span id="mg3-timer" class="timer-number">40</span>
         </div>
 
         <div id="mg3-sliders" class="sliders-container"></div>
