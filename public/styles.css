@@ -51,6 +51,7 @@ html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
 }
 
 body {
@@ -76,6 +77,7 @@ body {
   padding-bottom: var(--safe-bottom);
   padding-left: var(--safe-left);
   padding-right: var(--safe-right);
+  overflow-x: hidden;
 }
 
 /* ----- Screen Management ----- */
@@ -84,6 +86,7 @@ body {
   display: none;
   min-height: 100dvh;
   width: 100%;
+  overflow-x: hidden;
 }
 
 .screen.active {
@@ -97,6 +100,8 @@ body {
   width: 100%;
   padding: 24px 20px;
   flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 /* ----- Animations ----- */
@@ -276,6 +281,8 @@ body {
   gap: 8px;
   width: 100%;
   align-items: center;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .btn-ghost {
@@ -473,6 +480,8 @@ body {
   letter-spacing: 10px;
   color: var(--secondary);
   text-transform: uppercase;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .qr-wrapper {
@@ -482,7 +491,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 200px;
+  max-width: min(200px, 100%);
 }
 
 .qr-wrapper canvas {
@@ -669,6 +678,8 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .phase-indicator {
@@ -680,6 +691,10 @@ body {
   background: rgba(217, 70, 239, 0.12);
   padding: 4px 12px;
   border-radius: var(--radius-full);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .question-counter {
@@ -765,6 +780,8 @@ body {
   color: var(--text-light);
   text-align: center;
   line-height: 1.35;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* ----- Options Grid / Chips ----- */
@@ -779,6 +796,7 @@ body {
 .options-grid.scrollable {
   max-height: 340px;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
   padding-right: 4px;
@@ -813,6 +831,8 @@ body {
   -webkit-user-select: none;
   user-select: none;
   line-height: 1.3;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .chip:active {
@@ -828,6 +848,8 @@ body {
 .chip .chip-label {
   flex: 1;
   min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .chip.selected {
@@ -1010,6 +1032,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-radius: var(--radius-full);
   padding: 4px;
   gap: 4px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .tab {
@@ -1024,6 +1048,10 @@ input[type="range"]::-webkit-slider-runnable-track {
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: var(--font-sans);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tab.active {
@@ -1042,6 +1070,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   display: none;
   flex-direction: column;
   gap: 12px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .results-panel.active {
@@ -1063,6 +1093,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   perspective: 1000px;
   cursor: pointer;
   min-height: 160px;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .city-card {
@@ -1109,6 +1141,9 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .city-card-country,
@@ -1140,6 +1175,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .city-tag,
@@ -1150,6 +1187,10 @@ input[type="range"]::-webkit-slider-runnable-track {
   color: var(--text-muted);
   border-radius: var(--radius-full);
   font-weight: 500;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ----- Coincidences ----- */
@@ -1159,6 +1200,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   background: rgba(251, 146, 60, 0.08);
   border: 1px solid rgba(251, 146, 60, 0.2);
   border-radius: var(--radius-md);
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .results-coincidences:empty {
@@ -1209,6 +1252,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* ----- Results Actions ----- */
@@ -1262,6 +1307,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   gap: 6px;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 /* ----- Result Score Label ----- */
@@ -1294,6 +1340,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .coincidence-item {
@@ -1305,6 +1353,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-radius: var(--radius-full);
   font-weight: 600;
   color: var(--text-light);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .coincidence-icon {
@@ -1313,6 +1363,10 @@ input[type="range"]::-webkit-slider-runnable-track {
 
 .coincidence-name {
   font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .coincidence-badge {
@@ -1332,6 +1386,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 8px;
+  min-width: 0;
 }
 
 .penalty-item:last-child {
@@ -1341,11 +1397,16 @@ input[type="range"]::-webkit-slider-runnable-track {
 .penalty-reason {
   font-weight: 500;
   color: var(--text-light);
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .penalty-effect {
   font-size: 0.85rem;
   color: var(--text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* ----- Slider Bounds & Input Wrap ----- */
@@ -1418,6 +1479,9 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-size: 0.95rem;
   color: var(--text-muted);
   line-height: 1.5;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .overlay-icon {
@@ -1492,6 +1556,25 @@ input[type="range"]::-webkit-slider-runnable-track {
 
   .countdown-number {
     font-size: 4rem;
+  }
+
+  .phase-indicator {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    letter-spacing: 0;
+  }
+
+  .tab {
+    padding: 8px 8px;
+    font-size: 0.78rem;
+  }
+
+  .coincidence-item {
+    padding: 6px 12px;
+  }
+
+  .coincidence-name {
+    font-size: 0.85rem;
   }
 }
 
@@ -1584,6 +1667,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
+  min-width: 0;
 }
 
 .result-card.flipped .result-card-inner {
@@ -1598,6 +1682,8 @@ input[type="range"]::-webkit-slider-runnable-track {
 
 .result-card-front {
   position: relative;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .result-card-back {
@@ -1612,6 +1698,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--bg-card, rgba(255, 255, 255, 0.06));
   border-radius: inherit;
 }
@@ -1620,6 +1707,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .city-info-section h5 {
@@ -1652,6 +1741,8 @@ input[type="range"]::-webkit-slider-runnable-track {
   line-height: 1.3;
   padding-left: 12px;
   position: relative;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .city-info-item::before {
@@ -1712,6 +1803,10 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s, transform 0.15s;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .city-flight-link:active {
