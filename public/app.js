@@ -259,6 +259,7 @@ function setupLobby() {
     const code = $('input-code').value.trim().toUpperCase();
     if (code.length !== 4) return;
 
+    state.isJoining = true;
     if (!state.ws || state.ws.readyState !== WebSocket.OPEN) {
       // WS not ready yet - connect and send once open
       connectWS();
@@ -270,6 +271,7 @@ function setupLobby() {
       return;
     }
 
+    state.isJoining = true;
     send({ type: MSG.JOIN_ROOM, code, name: $('input-name').value.trim() || 'Jugador 2' });
   });
 
@@ -294,6 +296,12 @@ function handleRoomCreated(data) {
   state.roomCode = data.code;
   state.playerId = data.playerId;
   state.playerName = data.name || $('input-name').value.trim() || 'Jugador 1';
+
+  // Solo mode and joiners skip the waiting screen — SHOW_INTRO follows immediately
+  if (data.soloMode || state.isJoining) {
+    state.currentPhase = PHASES.LOBBY;
+    return;
+  }
 
   showScreen('screen-waiting');
   state.currentPhase = PHASES.LOBBY;

@@ -1510,7 +1510,7 @@ function handleMessage(ws, rawData) {
         return;
       }
 
-      if (room.phase !== PHASES.LOBBY) {
+      if (room.phase !== PHASES.LOBBY && room.phase !== PHASES.READY) {
         sendError(ws, 'La partida ya ha empezado');
         return;
       }
