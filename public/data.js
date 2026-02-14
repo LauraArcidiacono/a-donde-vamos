@@ -430,6 +430,8 @@ export const MSG = {
   WAITING_RECONNECT: 'waiting_reconnect',
   GAME_ABORTED: 'game_aborted',
   REMATCH_READY: 'rematch_ready',
+  SHOW_INTRO: 'show_intro',
+  INTRO_ALL_READY: 'intro_all_ready',
   ERROR: 'error'
 };
 
@@ -439,6 +441,7 @@ export const MSG = {
 
 export const PHASES = {
   LOBBY: 'lobby',
+  INTRO: 'intro',
   READY: 'ready',
   INSTRUCTIONS: 'instructions',
   MG1: 'mg1',

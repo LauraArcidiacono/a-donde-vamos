@@ -148,6 +148,15 @@ function routeMessage(msg) {
     case MSG.PLAYER_JOINED:
       handlePlayerJoined(msg);
       break;
+    case MSG.SHOW_INTRO:
+      showIntroScreen();
+      break;
+    case MSG.INTRO_ALL_READY:
+      showReadyScreen();
+      break;
+    case 'partner_intro_ready':
+      showPartnerIntroReady();
+      break;
     case MSG.BOTH_READY:
       showCountdown();
       break;
@@ -321,8 +330,8 @@ function handlePlayerJoined(data) {
       $('p2-name').textContent = data.player2Name || 'Jugador 2';
     }
 
-    // Both players present, move to ready screen
-    showReadyScreen();
+    // Server will send SHOW_INTRO to trigger the intro screen
+    // Don't auto-navigate to ready here anymore
   } else {
     // Update waiting room count
     $('player-count').textContent = `${data.playerCount || 1} / 2 jugadores`;
@@ -362,6 +371,56 @@ function setupReadyCheck() {
     const myDot = state.playerId === 'p1' ? $('p1-ready') : $('p2-ready');
     if (myDot) myDot.classList.add('ready');
   });
+}
+
+// ============================================================
+// Intro Screen
+// ============================================================
+
+function showIntroScreen() {
+  showScreen('screen-intro');
+  state.currentPhase = PHASES.INTRO;
+  state.introDone = false;
+
+  // Start background music
+  requestMusicStart();
+
+  // Reset button state
+  const btn = $('btn-intro-done');
+  btn.disabled = false;
+  btn.textContent = '\u00A1Entendido!';
+
+  // Hide partner status
+  const waitingEl = $('intro-partner-status');
+  if (waitingEl) waitingEl.classList.add('hidden');
+}
+
+function setupIntro() {
+  $('btn-intro-done').addEventListener('click', () => {
+    haptic('heavy');
+    if (state.introDone) return;
+    state.introDone = true;
+
+    send({ type: 'intro_done' });
+
+    // Show waiting state
+    const btn = $('btn-intro-done');
+    btn.disabled = true;
+    btn.textContent = 'Esperando...';
+
+    if (!state.soloMode) {
+      const waitingEl = $('intro-partner-status');
+      if (waitingEl) waitingEl.classList.remove('hidden');
+    }
+  });
+}
+
+function showPartnerIntroReady() {
+  const waitingEl = $('intro-partner-status');
+  if (waitingEl && !state.introDone) {
+    waitingEl.classList.remove('hidden');
+    waitingEl.querySelector('span:last-child').textContent = 'El otro jugador ya est\u00E1 listo';
+  }
 }
 
 function showCountdown() {
@@ -1671,6 +1730,7 @@ function init() {
   // Setup all event listeners
   setupLobby();
   setupReadyCheck();
+  setupIntro();
   setupInstructions();
   setupMG1();
   setupMG2Important();

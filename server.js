@@ -173,11 +173,14 @@ const MSG = {
   WAITING_RECONNECT: 'waiting_reconnect',
   GAME_ABORTED: 'game_aborted',
   REMATCH_READY: 'rematch_ready',
+  SHOW_INTRO: 'show_intro',
+  INTRO_ALL_READY: 'intro_all_ready',
   ERROR: 'error'
 };
 
 const PHASES = {
   LOBBY: 'lobby',
+  INTRO: 'intro',
   READY: 'ready',
   INSTRUCTIONS: 'instructions',
   MG1: 'mg1',
@@ -225,7 +228,8 @@ function createRoom(soloMode = false) {
     reconnectTimers: new Map(),
     aborted: false,
     instructionsReady: new Set(),
-    instructionsTimer: null
+    instructionsTimer: null,
+    introReady: new Set()
   };
   rooms.set(code, room);
   return room;
@@ -354,6 +358,43 @@ function startTimer(room, seconds, onTick, onExpire) {
 // ============================================================
 // Game Flow
 // ============================================================
+
+function handleIntroDone(room, player) {
+  if (room.phase !== PHASES.INTRO) return;
+  room.introReady.add(player.id);
+
+  // Notify partner that this player is ready
+  room.players.forEach(p => {
+    if (p.id !== player.id && !p.isBot) {
+      send(p.ws, 'partner_intro_ready', {});
+    }
+  });
+
+  // Bot auto-readies
+  if (room.botMode) {
+    const bot = room.players.find(p => p.isBot);
+    if (bot) room.introReady.add(bot.id);
+  }
+
+  // If both ready, move to the ready screen
+  if (room.introReady.size >= room.players.length) {
+    room.phase = PHASES.READY;
+    broadcast(room, MSG.INTRO_ALL_READY);
+
+    // In bot mode, auto-ready the bot for the game
+    if (room.botMode) {
+      const bot = room.players.find(p => p.isBot);
+      if (bot) {
+        setTimeout(() => {
+          bot.ready = true;
+          if (checkBothReady(room)) {
+            startGameSequence(room);
+          }
+        }, TIMERS.BOT_READY_DELAY);
+      }
+    }
+  }
+}
 
 function checkBothReady(room) {
   if (room.players.length < 2) return false;
@@ -1331,6 +1372,7 @@ function resetRoomForRematch(room) {
   room.timerRemaining = 0;
   room.extendUsed = new Map();
   room.rematchRequests = new Set();
+  room.introReady = new Set();
   room.aborted = false;
 
   for (const player of room.players) {
@@ -1401,13 +1443,13 @@ function handleMessage(ws, rawData) {
         player2Name: bot.name
       });
 
-      // Bot auto-readies after delay
-      setTimeout(() => {
-        bot.ready = true;
-        if (checkBothReady(room)) {
-          startGameSequence(room);
-        }
-      }, TIMERS.BOT_READY_DELAY);
+      // Show intro screen (bot auto-readies intro)
+      room.phase = PHASES.INTRO;
+      room.introReady.clear();
+      room.introReady.add(bot.id);
+      send(ws, MSG.SHOW_INTRO);
+
+      // Bot auto-readies game after delay (used after intro completes)
       break;
     }
 
@@ -1456,6 +1498,13 @@ function handleMessage(ws, rawData) {
         joinData.player2Name = room.players[1].name;
       }
       broadcast(room, MSG.PLAYER_JOINED, joinData);
+
+      // When both players have joined, show intro screen
+      if (room.players.length === 2) {
+        room.phase = PHASES.INTRO;
+        room.introReady.clear();
+        broadcast(room, MSG.SHOW_INTRO);
+      }
       break;
     }
 
@@ -1517,6 +1566,14 @@ function handleMessage(ws, rawData) {
       const { room: instrRoom, player: instrPlayer } = findRoomByWs(ws);
       if (instrRoom && instrPlayer) {
         handleInstructionsDone(instrRoom, instrPlayer);
+      }
+      break;
+    }
+
+    case 'intro_done': {
+      const { room: introRoom, player: introPlayer } = findRoomByWs(ws);
+      if (introRoom && introPlayer) {
+        handleIntroDone(introRoom, introPlayer);
       }
       break;
     }
