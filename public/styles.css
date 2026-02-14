@@ -1692,7 +1692,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
   height: 100%;
   transform: rotateY(180deg);
-  padding: 16px;
+  padding: 16px 16px 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1700,6 +1700,34 @@ input[type="range"]::-webkit-slider-runnable-track {
   overflow-x: hidden;
   background: var(--bg-card, rgba(255, 255, 255, 0.06));
   border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.result-card-back::-webkit-scrollbar {
+  width: 4px;
+}
+
+.result-card-back::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.result-card-back::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+/* Scroll fade indicator at bottom of card back */
+.result-card.flipped .result-card-back::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: 24px;
+  background: linear-gradient(to top, var(--surface-dark) 0%, transparent 100%);
+  pointer-events: none;
+  flex-shrink: 0;
 }
 
 .city-info-section {
@@ -1765,21 +1793,28 @@ input[type="range"]::-webkit-slider-runnable-track {
   align-items: center;
   justify-content: center;
   gap: 4px;
+  opacity: 0;
+  animation: flipHintAppear 0.4s ease-out 3s forwards;
 }
 
 .flip-hint-icon {
   display: inline-block;
-  animation: flipHintPulse 2s ease-in-out infinite;
+  animation: flipHintPulse 2s ease-in-out 3s infinite;
 }
 
 .result-card:not(.flipped) .result-card-inner {
-  animation: cardPeek 1.5s ease-in-out 0.8s 1;
+  animation: cardPeek 1.5s ease-in-out 3.2s 1;
 }
 
 @keyframes cardPeek {
   0%, 100% { transform: rotateY(0deg); }
   30% { transform: rotateY(15deg); }
   60% { transform: rotateY(-5deg); }
+}
+
+@keyframes flipHintAppear {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes flipHintPulse {
