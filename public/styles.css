@@ -609,6 +609,54 @@ body {
 }
 
 /* ============================== */
+/* INTRO / ONBOARDING SCREEN      */
+/* ============================== */
+
+.intro-content {
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.intro-rounds {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.intro-round {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface-dark);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.intro-round-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.intro-round-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.intro-round-info p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ============================== */
 /* INSTRUCTIONS SCREEN            */
 /* ============================== */
 
