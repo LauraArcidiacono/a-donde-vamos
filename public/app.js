@@ -437,21 +437,11 @@ function showInstructions(phase) {
   const waitingEl = $('instr-partner-status');
   if (waitingEl) waitingEl.classList.add('hidden');
 
-  // Auto-advance countdown
-  let countdownSec = 5;
-  const countdownSpan = $('instr-countdown');
-  countdownSpan.textContent = countdownSec;
+  // Hide auto-advance text (no longer auto-advancing)
+  const autoEl = document.querySelector('.instr-auto');
+  if (autoEl) autoEl.classList.add('hidden');
 
   clearTimers();
-
-  state.instructionTimer = setInterval(() => {
-    countdownSec--;
-    countdownSpan.textContent = countdownSec;
-    if (countdownSec <= 0) {
-      clearTimers();
-      sendInstructionsDone();
-    }
-  }, 1000);
 }
 
 function sendInstructionsDone() {

@@ -379,12 +379,7 @@ function startMiniGame(room, phase) {
   room.instructionsReady.clear();
   room.pendingPhase = phase;
   broadcast(room, MSG.SHOW_INSTRUCTIONS, { phase });
-
-  // Auto-advance after timeout (fallback if players don't click)
-  if (room.instructionsTimer) clearTimeout(room.instructionsTimer);
-  room.instructionsTimer = setTimeout(() => {
-    advanceFromInstructions(room);
-  }, TIMERS.INSTRUCTIONS * 1000);
+  // No auto-advance: players must click "Siguiente" to proceed
 }
 
 function advanceFromInstructions(room) {
