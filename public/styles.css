@@ -1717,18 +1717,6 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-radius: 2px;
 }
 
-/* Scroll fade indicator at bottom of card back */
-.result-card.flipped .result-card-back::after {
-  content: '';
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  min-height: 24px;
-  background: linear-gradient(to top, var(--surface-dark) 0%, transparent 100%);
-  pointer-events: none;
-  flex-shrink: 0;
-}
 
 .city-info-section {
   display: flex;
