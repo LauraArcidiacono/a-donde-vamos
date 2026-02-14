@@ -266,12 +266,13 @@ function handleRoomCreated(data) {
   // Display room code
   $('room-code').textContent = data.code;
 
-  // Generate QR code
-  const joinUrl = `${location.origin}${location.pathname}?room=${data.code}`;
+  // Generate QR code - force https for share URLs (http links won't be clickable in WhatsApp)
+  let joinUrl = `${location.origin}${location.pathname}?room=${data.code}`;
+  const shareUrl = joinUrl.replace(/^http:\/\//, 'https://');
   const canvas = $('qr-code');
   const qrWrapper = canvas.closest('.qr-wrapper');
   if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
-    QRCode.toCanvas(canvas, joinUrl, {
+    QRCode.toCanvas(canvas, shareUrl, {
       width: 200,
       color: { dark: '#1C1917', light: '#FFFFFF' },
     });
@@ -285,7 +286,7 @@ function handleRoomCreated(data) {
   $('player-count').textContent = '1 / 2 jugadores';
 
   // Share link button
-  setupShareLink(joinUrl);
+  setupShareLink(shareUrl);
 }
 
 function setupShareLink(url) {
