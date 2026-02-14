@@ -136,6 +136,19 @@ function send(data) {
   }
 }
 
+function sendOrReconnect(data) {
+  if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+    send(data);
+    return;
+  }
+  connectWS();
+  const onOpen = () => {
+    send(data);
+    state.ws.removeEventListener('open', onOpen);
+  };
+  state.ws.addEventListener('open', onOpen);
+}
+
 // ============================================================
 // Message Router
 // ============================================================
@@ -221,21 +234,34 @@ function showScreen(screenId) {
 function setupLobby() {
   $('btn-create').addEventListener('click', () => {
     haptic();
-    send({ type: MSG.CREATE_ROOM, name: $('input-name').value.trim() || 'Jugador 1' });
+    const msg = { type: MSG.CREATE_ROOM, name: $('input-name').value.trim() || 'Jugador 1' };
+    sendOrReconnect(msg);
   });
 
   $('btn-solo').addEventListener('click', () => {
     haptic();
     state.soloMode = true;
-    send({ type: MSG.CREATE_SOLO, name: $('input-name').value.trim() || 'Jugador 1' });
+    const msg = { type: MSG.CREATE_SOLO, name: $('input-name').value.trim() || 'Jugador 1' };
+    sendOrReconnect(msg);
   });
 
   $('btn-join').addEventListener('click', () => {
     haptic();
     const code = $('input-code').value.trim().toUpperCase();
-    if (code.length === 4) {
-      send({ type: MSG.JOIN_ROOM, code, name: $('input-name').value.trim() || 'Jugador 2' });
+    if (code.length !== 4) return;
+
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) {
+      // WS not ready yet - connect and send once open
+      connectWS();
+      const onOpen = () => {
+        send({ type: MSG.JOIN_ROOM, code, name: $('input-name').value.trim() || 'Jugador 2' });
+        state.ws.removeEventListener('open', onOpen);
+      };
+      state.ws.addEventListener('open', onOpen);
+      return;
     }
+
+    send({ type: MSG.JOIN_ROOM, code, name: $('input-name').value.trim() || 'Jugador 2' });
   });
 
   const inputCode = $('input-code');
