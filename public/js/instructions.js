@@ -54,9 +54,9 @@ export function showInstructions(phase) {
     rulesEl.appendChild(li);
   });
 
-  const btn = $('btn-instr-next');
-  btn.disabled = false;
-  btn.textContent = 'Siguiente';
+  const button = $('btn-instr-next');
+  button.disabled = false;
+  button.textContent = 'Siguiente';
 
   const waitingEl = $('instr-partner-status');
   if (waitingEl) waitingEl.classList.add('hidden');
@@ -72,9 +72,9 @@ function sendInstructionsDone() {
   state.instructionsSent = true;
   send({ type: 'instructions_done', phase: state.currentPhase });
 
-  const btn = $('btn-instr-next');
-  btn.disabled = true;
-  btn.textContent = 'Esperando...';
+  const button = $('btn-instr-next');
+  button.disabled = true;
+  button.textContent = 'Esperando...';
 
   if (!state.soloMode) {
     const waitingEl = $('instr-partner-status');

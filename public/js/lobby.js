@@ -9,9 +9,9 @@ import { showScreen } from './screens.js';
 import { haptic, copyToClipboard, showToast } from './utils.js';
 
 export function createLobbyTemplates() {
-  const frag = document.createDocumentFragment();
-  const wrap = document.createElement('div');
-  wrap.innerHTML = `
+  const fragment = document.createDocumentFragment();
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
     <section id="screen-lobby" class="screen active">
       <div class="screen-content lobby-content">
         <div class="lobby-header">
@@ -65,22 +65,22 @@ export function createLobbyTemplates() {
         <div id="player-count" class="player-count">1 / 2 jugadores</div>
       </div>
     </section>`;
-  while (wrap.firstChild) frag.appendChild(wrap.firstChild);
-  return frag;
+  while (wrapper.firstChild) fragment.appendChild(wrapper.firstChild);
+  return fragment;
 }
 
 export function setupLobby() {
   $('btn-create').addEventListener('click', () => {
     haptic();
-    const msg = { type: MSG.CREATE_ROOM, name: $('input-name').value.trim() || 'Jugador 1' };
-    sendOrReconnect(msg);
+    const message = { type: MSG.CREATE_ROOM, name: $('input-name').value.trim() || 'Jugador 1' };
+    sendOrReconnect(message);
   });
 
   $('btn-solo').addEventListener('click', () => {
     haptic();
     state.soloMode = true;
-    const msg = { type: MSG.CREATE_SOLO, name: $('input-name').value.trim() || 'Jugador 1' };
-    sendOrReconnect(msg);
+    const message = { type: MSG.CREATE_SOLO, name: $('input-name').value.trim() || 'Jugador 1' };
+    sendOrReconnect(message);
   });
 
   $('btn-join').addEventListener('click', () => {

@@ -85,11 +85,11 @@ function renderOptions(options) {
   const container = $('mg1-options');
   container.innerHTML = '';
 
-  options.forEach((opt) => {
+  options.forEach((option) => {
     const chip = document.createElement('button');
     chip.className = 'chip';
-    chip.dataset.id = opt.id;
-    chip.innerHTML = `<span class="chip-icon">${opt.icon}</span><span class="chip-label">${opt.label}</span>`;
+    chip.dataset.id = option.id;
+    chip.innerHTML = `<span class="chip-icon">${option.icon}</span><span class="chip-label">${option.label}</span>`;
     container.appendChild(chip);
   });
 }

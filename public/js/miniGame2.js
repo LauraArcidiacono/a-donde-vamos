@@ -31,27 +31,27 @@ const MG2_CONFIGS = {
   },
 };
 
-function createMG2Screen(cfg) {
+function createMG2Screen(config) {
   return `
-    <section id="${cfg.screenId}" class="screen">
+    <section id="${config.screenId}" class="screen">
       <div class="screen-content game-content">
         <div class="game-header">
-          <span class="phase-indicator">${cfg.headerText}</span>
+          <span class="phase-indicator">${config.headerText}</span>
         </div>
         <div class="timer-container">
-          <div id="${cfg.prefix}-timer-bar" class="timer-bar">
+          <div id="${config.prefix}-timer-bar" class="timer-bar">
             <div class="timer-bar-fill" style="width: 100%"></div>
           </div>
-          <span id="${cfg.prefix}-timer" class="timer-number">40</span>
+          <span id="${config.prefix}-timer" class="timer-number">40</span>
         </div>
         <div class="search-wrapper">
           ${SEARCH_SVG}
-          <input id="${cfg.prefix}-search" type="text" class="search-input" placeholder="Buscar...">
+          <input id="${config.prefix}-search" type="text" class="search-input" placeholder="Buscar...">
         </div>
-        <p id="${cfg.prefix}-count" class="selection-counter">0/3 seleccionadas</p>
-        <div id="${cfg.prefix}-options" class="options-grid scrollable"></div>
-        <button id="${cfg.prefix}-confirm" class="btn btn-primary" disabled>Confirmar</button>
-        <div id="${cfg.prefix}-partner-status" class="partner-status hidden">
+        <p id="${config.prefix}-count" class="selection-counter">0/3 seleccionadas</p>
+        <div id="${config.prefix}-options" class="options-grid scrollable"></div>
+        <button id="${config.prefix}-confirm" class="btn btn-primary" disabled>Confirmar</button>
+        <div id="${config.prefix}-partner-status" class="partner-status hidden">
           <span class="pulse-dot"></span>
           <span>El otro jugador est\u00E1 eligiendo...</span>
         </div>
@@ -60,37 +60,37 @@ function createMG2Screen(cfg) {
 }
 
 export function createMiniGame2Templates() {
-  const frag = document.createDocumentFragment();
-  const wrap = document.createElement('div');
-  wrap.innerHTML = createMG2Screen(MG2_CONFIGS.important) + createMG2Screen(MG2_CONFIGS.nowant);
-  while (wrap.firstChild) frag.appendChild(wrap.firstChild);
-  return frag;
+  const fragment = document.createDocumentFragment();
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = createMG2Screen(MG2_CONFIGS.important) + createMG2Screen(MG2_CONFIGS.nowant);
+  while (wrapper.firstChild) fragment.appendChild(wrapper.firstChild);
+  return fragment;
 }
 
-function renderMG2(cfg) {
+function renderMG2(config) {
   state.currentSelections = [];
   state.answered = false;
   state.partnerAnswered = false;
 
-  const container = $(`${cfg.prefix}-options`);
+  const container = $(`${config.prefix}-options`);
   container.innerHTML = '';
 
-  cfg.options.forEach((opt) => {
+  config.options.forEach((option) => {
     const chip = document.createElement('button');
-    chip.className = cfg.chipClass;
-    chip.dataset.id = opt.id;
-    chip.innerHTML = `<span class="chip-icon">${opt.icon}</span><span class="chip-label">${opt.label}</span>`;
+    chip.className = config.chipClass;
+    chip.dataset.id = option.id;
+    chip.innerHTML = `<span class="chip-icon">${option.icon}</span><span class="chip-label">${option.label}</span>`;
     container.appendChild(chip);
   });
 
-  $(`${cfg.prefix}-search`).value = '';
-  $(`${cfg.prefix}-count`).textContent = '0/3 seleccionadas';
-  $(`${cfg.prefix}-confirm`).disabled = true;
-  $(`${cfg.prefix}-partner-status`).classList.add('hidden');
+  $(`${config.prefix}-search`).value = '';
+  $(`${config.prefix}-count`).textContent = '0/3 seleccionadas';
+  $(`${config.prefix}-confirm`).disabled = true;
+  $(`${config.prefix}-partner-status`).classList.add('hidden');
 }
 
-function setupMG2(cfg) {
-  $(`${cfg.prefix}-options`).addEventListener('click', (e) => {
+function setupMG2(config) {
+  $(`${config.prefix}-options`).addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (!chip || chip.classList.contains('disabled') || state.answered) return;
 
@@ -100,42 +100,42 @@ function setupMG2(cfg) {
     if (chip.classList.contains('selected')) {
       chip.classList.remove('selected');
       state.currentSelections = state.currentSelections.filter((id) => id !== optionId);
-      $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.remove('disabled'));
+      $(`${config.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.remove('disabled'));
     } else {
       if (state.currentSelections.length < 3) {
         chip.classList.add('selected');
         state.currentSelections.push(optionId);
         if (state.currentSelections.length >= 3) {
-          $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((c) => {
+          $(`${config.prefix}-options`).querySelectorAll('.chip').forEach((c) => {
             if (!c.classList.contains('selected')) c.classList.add('disabled');
           });
         }
       }
     }
 
-    $(`${cfg.prefix}-count`).textContent = `${state.currentSelections.length}/3 seleccionadas`;
-    $(`${cfg.prefix}-confirm`).disabled = state.currentSelections.length !== 3;
+    $(`${config.prefix}-count`).textContent = `${state.currentSelections.length}/3 seleccionadas`;
+    $(`${config.prefix}-confirm`).disabled = state.currentSelections.length !== 3;
   });
 
-  $(`${cfg.prefix}-search`).addEventListener('input', (e) => {
+  $(`${config.prefix}-search`).addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim();
-    $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((chip) => {
+    $(`${config.prefix}-options`).querySelectorAll('.chip').forEach((chip) => {
       const label = chip.querySelector('.chip-label').textContent.toLowerCase();
       chip.style.display = (query === '' || label.includes(query)) ? '' : 'none';
     });
   });
 
-  $(`${cfg.prefix}-confirm`).addEventListener('click', () => {
+  $(`${config.prefix}-confirm`).addEventListener('click', () => {
     if (state.currentSelections.length !== 3 || state.answered) return;
     haptic('heavy');
     state.answered = true;
 
-    send({ type: MSG.SUBMIT_ANSWER, phase: cfg.phase, answer: [...state.currentSelections] });
+    send({ type: MSG.SUBMIT_ANSWER, phase: config.phase, answer: [...state.currentSelections] });
 
-    $(`${cfg.prefix}-confirm`).disabled = true;
-    $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.add('disabled'));
+    $(`${config.prefix}-confirm`).disabled = true;
+    $(`${config.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.add('disabled'));
 
-    if (!state.partnerAnswered) $(`${cfg.prefix}-partner-status`).classList.remove('hidden');
+    if (!state.partnerAnswered) $(`${config.prefix}-partner-status`).classList.remove('hidden');
   });
 }
 

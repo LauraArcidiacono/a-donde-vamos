@@ -56,9 +56,9 @@ export function showIntroScreen() {
 
   requestMusicStart();
 
-  const btn = $('btn-intro-done');
-  btn.disabled = false;
-  btn.textContent = '\u00A1Entendido!';
+  const button = $('btn-intro-done');
+  button.disabled = false;
+  button.textContent = '\u00A1Entendido!';
 
   const waitingEl = $('intro-partner-status');
   if (waitingEl) waitingEl.classList.add('hidden');
@@ -72,9 +72,9 @@ export function setupIntro() {
 
     send({ type: 'intro_done' });
 
-    const btn = $('btn-intro-done');
-    btn.disabled = true;
-    btn.textContent = 'Esperando...';
+    const button = $('btn-intro-done');
+    button.disabled = true;
+    button.textContent = 'Esperando...';
 
     if (!state.soloMode) {
       const waitingEl = $('intro-partner-status');

@@ -32,13 +32,13 @@ export function connectWS() {
   });
 
   state.ws.addEventListener('message', (event) => {
-    let msg;
+    let message;
     try {
-      msg = JSON.parse(event.data);
+      message = JSON.parse(event.data);
     } catch {
       return;
     }
-    if (messageHandler) messageHandler(msg);
+    if (messageHandler) messageHandler(message);
   });
 
   state.ws.addEventListener('close', () => {

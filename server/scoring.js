@@ -77,9 +77,9 @@ function computePlayerScores(player) {
 }
 
 export function buildMG1Preferences(player) {
-  const prefs = {};
+  const preferences = {};
   for (const tag of TAGS) {
-    prefs[tag] = 0;
+    preferences[tag] = 0;
   }
 
   for (const question of MG1_QUESTIONS) {
@@ -89,19 +89,19 @@ export function buildMG1Preferences(player) {
       const option = question.options.find(o => o.id === optId);
       if (option && option.tags) {
         for (const [tag, weight] of Object.entries(option.tags)) {
-          prefs[tag] = (prefs[tag] || 0) + weight;
+          preferences[tag] = (preferences[tag] || 0) + weight;
         }
       }
     }
   }
 
-  return normalizePrefs(prefs);
+  return normalizePrefs(preferences);
 }
 
 export function buildMG2ImportantPreferences(player) {
-  const prefs = {};
+  const preferences = {};
   for (const tag of TAGS) {
-    prefs[tag] = 0;
+    preferences[tag] = 0;
   }
 
   const selectedIds = player.answers.mg2_important || [];
@@ -109,48 +109,48 @@ export function buildMG2ImportantPreferences(player) {
     const option = MG2_IMPORTANT_OPTIONS.find(o => o.id === optId);
     if (option && option.tags) {
       for (const [tag, weight] of Object.entries(option.tags)) {
-        prefs[tag] = (prefs[tag] || 0) + weight;
+        preferences[tag] = (preferences[tag] || 0) + weight;
       }
     }
   }
 
-  return normalizePrefs(prefs);
+  return normalizePrefs(preferences);
 }
 
 export function buildMG3Preferences(player) {
-  const prefs = {};
+  const preferences = {};
   const sliderValues = player.answers.mg3 || {};
 
   for (const tag of TAGS) {
     // p_i = (slider_value - 1) / 4  (1..5 -> 0..1)
-    const val = sliderValues[tag] !== undefined ? sliderValues[tag] : 3;
-    prefs[tag] = (val - 1) / 4;
+    const value = sliderValues[tag] !== undefined ? sliderValues[tag] : 3;
+    preferences[tag] = (value - 1) / 4;
   }
 
-  return prefs;
+  return preferences;
 }
 
-export function normalizePrefs(prefs) {
+export function normalizePrefs(preferences) {
   let maxVal = 0;
   for (const tag of TAGS) {
-    if ((prefs[tag] || 0) > maxVal) {
-      maxVal = prefs[tag];
+    if ((preferences[tag] || 0) > maxVal) {
+      maxVal = preferences[tag];
     }
   }
   if (maxVal > 0) {
     for (const tag of TAGS) {
-      prefs[tag] = (prefs[tag] || 0) / maxVal;
+      preferences[tag] = (preferences[tag] || 0) / maxVal;
     }
   }
-  return prefs;
+  return preferences;
 }
 
-export function computeSimilarity(prefs, cityTags) {
+export function computeSimilarity(preferences, cityTags) {
   let numerator = 0;
   let denominator = 0;
 
   for (const tag of TAGS) {
-    const p = prefs[tag] || 0;
+    const p = preferences[tag] || 0;
     const t = cityTags[tag] || 0;
     numerator += p * t;
     denominator += p;

@@ -5,9 +5,9 @@
 import { $, $$ } from './state.js';
 
 export function createOverlayTemplates() {
-  const frag = document.createDocumentFragment();
-  const wrap = document.createElement('div');
-  wrap.innerHTML = `
+  const fragment = document.createDocumentFragment();
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
     <div id="overlay-disconnect" class="overlay hidden">
       <div class="overlay-card">
         <div class="overlay-icon">\u26A0\uFE0F</div>
@@ -27,8 +27,8 @@ export function createOverlayTemplates() {
         <button id="btn-back-lobby" class="btn btn-primary">Volver al inicio</button>
       </div>
     </div>`;
-  while (wrap.firstChild) frag.appendChild(wrap.firstChild);
-  return frag;
+  while (wrapper.firstChild) fragment.appendChild(wrapper.firstChild);
+  return fragment;
 }
 
 export function showScreen(screenId) {

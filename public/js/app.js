@@ -23,28 +23,28 @@ import { createResultsTemplate, showResults, setupShareResults, setupRematch, re
 // Message Router
 // ============================================================
 
-function routeMessage(msg) {
-  switch (msg.type) {
-    case MSG.ROOM_CREATED:      handleRoomCreated(msg); break;
-    case MSG.PLAYER_JOINED:     handlePlayerJoined(msg); break;
+function routeMessage(message) {
+  switch (message.type) {
+    case MSG.ROOM_CREATED:      handleRoomCreated(message); break;
+    case MSG.PLAYER_JOINED:     handlePlayerJoined(message); break;
     case MSG.SHOW_INTRO:        showIntroScreen(); break;
     case MSG.INTRO_ALL_READY:   showReadyScreen(); break;
     case 'partner_intro_ready': showPartnerIntroReady(); break;
     case MSG.BOTH_READY:        showCountdown(); break;
-    case MSG.SHOW_INSTRUCTIONS: showInstructions(msg.phase); break;
-    case MSG.PHASE_CHANGE:      handlePhaseChange(msg.phase); break;
+    case MSG.SHOW_INSTRUCTIONS: showInstructions(message.phase); break;
+    case MSG.PHASE_CHANGE:      handlePhaseChange(message.phase); break;
     case 'partner_instructions_ready': showPartnerInstructionsReady(); break;
-    case MSG.QUESTION:          showQuestion(msg); break;
-    case MSG.TIMER_TICK:        handleTimerTick(msg); break;
-    case MSG.TIMER_EXTENDED:    handleTimerExtended(msg); break;
+    case MSG.QUESTION:          showQuestion(message); break;
+    case MSG.TIMER_TICK:        handleTimerTick(message); break;
+    case MSG.TIMER_EXTENDED:    handleTimerExtended(message); break;
     case MSG.PARTNER_ANSWERED:  showPartnerAnswered(); break;
-    case MSG.RESULTS:           showResults(msg.results); break;
-    case MSG.PLAYER_DISCONNECTED: showDisconnectOverlay(msg); break;
+    case MSG.RESULTS:           showResults(message.results); break;
+    case MSG.PLAYER_DISCONNECTED: showDisconnectOverlay(message); break;
     case MSG.PLAYER_RECONNECTED:  hideDisconnectOverlay(); break;
-    case MSG.WAITING_RECONNECT:   updateDisconnectCountdown(msg); break;
+    case MSG.WAITING_RECONNECT:   updateDisconnectCountdown(message); break;
     case MSG.GAME_ABORTED:      showAborted(); break;
     case MSG.REMATCH_READY:     resetForRematch(); break;
-    case MSG.ERROR:             showError(msg.message); break;
+    case MSG.ERROR:             showError(message.message); break;
     default: break;
   }
 }

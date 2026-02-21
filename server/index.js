@@ -29,17 +29,17 @@ wss.on('connection', (ws) => {
 
 function getLocalIPs() {
   const interfaces = os.networkInterfaces();
-  const ips = [];
+  const ipAddresses = [];
 
-  for (const [, addrs] of Object.entries(interfaces)) {
-    for (const addr of addrs) {
-      if (addr.family === 'IPv4' && !addr.internal) {
-        ips.push(addr.address);
+  for (const [, interfaceAddresses] of Object.entries(interfaces)) {
+    for (const interfaceAddress of interfaceAddresses) {
+      if (interfaceAddress.family === 'IPv4' && !interfaceAddress.internal) {
+        ipAddresses.push(interfaceAddress.address);
       }
     }
   }
 
-  return ips;
+  return ipAddresses;
 }
 
 httpServer.listen(PORT, () => {

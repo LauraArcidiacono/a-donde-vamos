@@ -160,14 +160,14 @@ function startMG1(room) {
 function sendMG1Question(room) {
   if (room.aborted) return;
 
-  const idx = room.currentQuestionIndex;
-  if (idx >= MG1_QUESTIONS.length) {
+  const index = room.currentQuestionIndex;
+  if (index >= MG1_QUESTIONS.length) {
     // MG1 complete, move to MG2 important
     startMiniGame(room, PHASES.MG2_IMPORTANT);
     return;
   }
 
-  const question = MG1_QUESTIONS[idx];
+  const question = MG1_QUESTIONS[index];
   room.currentQuestion = question.id;
 
   // Clear per-question answer tracking

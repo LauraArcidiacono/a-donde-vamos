@@ -54,8 +54,8 @@ export function serveStaticFile(req, res) {
     return;
   }
 
-  const ext = path.extname(filePath).toLowerCase();
-  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+  const extension = path.extname(filePath).toLowerCase();
+  const contentType = MIME_TYPES[extension] || 'application/octet-stream';
 
   fs.readFile(filePath, (err, data) => {
     if (err) {

@@ -44,10 +44,10 @@ export function updateTimerBar(prefix, remaining, total) {
   if (timerBarEl) {
     const fill = timerBarEl.querySelector('.timer-bar-fill');
     if (fill) {
-      const pct = total > 0 ? (remaining / total) * 100 : 0;
+      const percentage = total > 0 ? (remaining / total) * 100 : 0;
 
       requestAnimationFrame(() => {
-        fill.style.width = `${pct}%`;
+        fill.style.width = `${percentage}%`;
 
         fill.classList.remove('timer-warning', 'timer-danger');
         if (remaining <= 5) {

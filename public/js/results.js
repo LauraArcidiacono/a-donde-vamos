@@ -220,10 +220,10 @@ function renderCoincidences(coincidences) {
   container.innerHTML = '';
 
   if (coincidences.length === 0) {
-    const msg = document.createElement('p');
-    msg.className = 'no-coincidences';
-    msg.textContent = 'No hay coincidencias directas, pero aqui va el top combinado';
-    container.appendChild(msg);
+    const message = document.createElement('p');
+    message.className = 'no-coincidences';
+    message.textContent = 'No hay coincidencias directas, pero aqui va el top combinado';
+    container.appendChild(message);
     return;
   }
 
@@ -257,9 +257,9 @@ function renderPenalties(penalties) {
   content.innerHTML = '';
 
   if (!penalties || penalties.length === 0) {
-    const msg = document.createElement('p');
-    msg.textContent = 'No se aplicaron ajustes.';
-    content.appendChild(msg);
+    const message = document.createElement('p');
+    message.textContent = 'No se aplicaron ajustes.';
+    content.appendChild(message);
     return;
   }
 

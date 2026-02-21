@@ -77,12 +77,12 @@ export function renderMiniGame3Sliders() {
     input.addEventListener('input', () => {
       valueDisplay.textContent = input.value;
       haptic();
-      const pct = ((input.value - slider.min) / (slider.max - slider.min)) * 100;
-      input.style.setProperty('--slider-pct', `${pct}%`);
+      const percentage = ((input.value - slider.min) / (slider.max - slider.min)) * 100;
+      input.style.setProperty('--slider-pct', `${percentage}%`);
     });
 
-    const initialPct = ((slider.defaultValue - slider.min) / (slider.max - slider.min)) * 100;
-    input.style.setProperty('--slider-pct', `${initialPct}%`);
+    const initialPercentage = ((slider.defaultValue - slider.min) / (slider.max - slider.min)) * 100;
+    input.style.setProperty('--slider-pct', `${initialPercentage}%`);
 
     inputWrap.appendChild(minLabel);
     inputWrap.appendChild(input);
@@ -113,8 +113,8 @@ export function setupMiniGame3() {
     send({ type: MSG.SUBMIT_ANSWER, phase: PHASES.MG3, answer });
 
     $('mg3-confirm').disabled = true;
-    $('mg3-sliders').querySelectorAll('input[type="range"]').forEach((inp) => {
-      inp.disabled = true;
+    $('mg3-sliders').querySelectorAll('input[type="range"]').forEach((rangeInput) => {
+      rangeInput.disabled = true;
     });
 
     if (!state.partnerAnswered) $('mg3-partner-status').classList.remove('hidden');

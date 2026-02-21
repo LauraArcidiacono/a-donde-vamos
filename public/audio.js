@@ -75,16 +75,16 @@ function toggleMute() {
 }
 
 function updateMuteButton() {
-  const btn = document.getElementById('btn-audio-toggle');
-  if (!btn) return;
+  const button = document.getElementById('btn-audio-toggle');
+  if (!button) return;
 
-  const iconEl = btn.querySelector('.audio-icon');
+  const iconEl = button.querySelector('.audio-icon');
   if (iconEl) {
     iconEl.textContent = isMuted ? '\uD83D\uDD07' : '\uD83D\uDD0A';
   }
 
-  btn.classList.toggle('muted', isMuted);
-  btn.setAttribute('aria-label', isMuted ? 'Activar sonido' : 'Silenciar');
+  button.classList.toggle('muted', isMuted);
+  button.setAttribute('aria-label', isMuted ? 'Activar sonido' : 'Silenciar');
 }
 
 // ============================================================
@@ -101,8 +101,8 @@ function startMusic() {
   musicPlaying = true;
 
   // BPM and timing
-  const bpm = 128;
-  const beatDur = 60 / bpm;
+  const beatsPerMinute = 128;
+  const beatDur = 60 / beatsPerMinute;
   const barDur = beatDur * 4;
   const loopBars = 4;
   const loopDur = barDur * loopBars;
@@ -130,11 +130,11 @@ function startMusic() {
 
     // --- Bass (sine, low volume, rhythmic) ---
     bassLine.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
+      const oscillator = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
-      osc.type = 'sine';
-      osc.frequency.value = freq / 2; // one octave lower
+      oscillator.type = 'sine';
+      oscillator.frequency.value = freq / 2; // one octave lower
       gain.gain.value = 0;
 
       const start = now + (i * beatDur * loopBars / bassLine.length);
@@ -145,21 +145,21 @@ function startMusic() {
       gain.gain.setValueAtTime(0.35, start + noteDur * 0.7);
       gain.gain.linearRampToValueAtTime(0, start + noteDur);
 
-      osc.connect(gain);
+      oscillator.connect(gain);
       gain.connect(musicGain);
-      osc.start(start);
-      osc.stop(start + noteDur + 0.01);
+      oscillator.start(start);
+      oscillator.stop(start + noteDur + 0.01);
 
-      musicNodes.push(osc, gain);
+      musicNodes.push(oscillator, gain);
     });
 
     // --- Melody (triangle, light and bright) ---
     melodyNotes.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
+      const oscillator = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
+      oscillator.type = 'triangle';
+      oscillator.frequency.value = freq;
       gain.gain.value = 0;
 
       const start = now + (i * loopDur / melodyNotes.length);
@@ -170,23 +170,23 @@ function startMusic() {
       gain.gain.setValueAtTime(0.15, start + noteDur * 0.5);
       gain.gain.exponentialRampToValueAtTime(0.001, start + noteDur);
 
-      osc.connect(gain);
+      oscillator.connect(gain);
       gain.connect(musicGain);
-      osc.start(start);
-      osc.stop(start + noteDur + 0.01);
+      oscillator.start(start);
+      oscillator.stop(start + noteDur + 0.01);
 
-      musicNodes.push(osc, gain);
+      musicNodes.push(oscillator, gain);
     });
 
     // --- Chord pads (soft saw with filter) ---
     chordFreqs.forEach((chord, i) => {
       chord.forEach((freq) => {
-        const osc = audioCtx.createOscillator();
+        const oscillator = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         const filter = audioCtx.createBiquadFilter();
 
-        osc.type = 'sawtooth';
-        osc.frequency.value = freq;
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.value = freq;
         filter.type = 'lowpass';
         filter.frequency.value = 800;
         filter.Q.value = 1;
@@ -200,13 +200,13 @@ function startMusic() {
         gain.gain.setValueAtTime(0.04, start + noteDur * 0.6);
         gain.gain.linearRampToValueAtTime(0, start + noteDur);
 
-        osc.connect(filter);
+        oscillator.connect(filter);
         filter.connect(gain);
         gain.connect(musicGain);
-        osc.start(start);
-        osc.stop(start + noteDur + 0.01);
+        oscillator.start(start);
+        oscillator.stop(start + noteDur + 0.01);
 
-        musicNodes.push(osc, gain, filter);
+        musicNodes.push(oscillator, gain, filter);
       });
     });
 
@@ -216,30 +216,30 @@ function startMusic() {
       const start = now + (i * beatDur / 2);
 
       // Create short noise burst using oscillator trick
-      const osc = audioCtx.createOscillator();
+      const oscillator = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       const filter = audioCtx.createBiquadFilter();
 
-      osc.type = 'square';
-      osc.frequency.value = 6000 + Math.random() * 4000;
+      oscillator.type = 'square';
+      oscillator.frequency.value = 6000 + Math.random() * 4000;
       filter.type = 'highpass';
       filter.frequency.value = 8000;
       gain.gain.value = 0;
 
-      const vol = isAccent ? 0.06 : 0.03;
-      const dur = 0.04;
+      const volume = isAccent ? 0.06 : 0.03;
+      const duration = 0.04;
 
       gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(vol, start + 0.002);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+      gain.gain.linearRampToValueAtTime(volume, start + 0.002);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
 
-      osc.connect(filter);
+      oscillator.connect(filter);
       filter.connect(gain);
       gain.connect(musicGain);
-      osc.start(start);
-      osc.stop(start + dur + 0.01);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.01);
 
-      musicNodes.push(osc, gain, filter);
+      musicNodes.push(oscillator, gain, filter);
     }
 
     // Schedule next loop
@@ -281,8 +281,8 @@ function startResultsMusic() {
   resultsPlaying = true;
 
   // Slower tempo, peaceful
-  const bpm = 72;
-  const beatDur = 60 / bpm;
+  const beatsPerMinute = 72;
+  const beatDur = 60 / beatsPerMinute;
   const barDur = beatDur * 4;
   const loopBars = 4;
   const loopDur = barDur * loopBars;
@@ -310,51 +310,51 @@ function startResultsMusic() {
     chords.forEach((chord, chordIdx) => {
       chord.forEach((freq) => {
         // Sine layer
-        const osc = audioCtx.createOscillator();
+        const oscillator = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         const filter = audioCtx.createBiquadFilter();
 
-        osc.type = 'sine';
-        osc.frequency.value = freq / 2; // lower octave for warmth
+        oscillator.type = 'sine';
+        oscillator.frequency.value = freq / 2; // lower octave for warmth
         filter.type = 'lowpass';
         filter.frequency.value = 500;
         gain.gain.value = 0;
 
         const start = now + chordIdx * barDur;
-        const dur = barDur * 0.95;
+        const duration = barDur * 0.95;
 
         gain.gain.setValueAtTime(0, start);
         gain.gain.linearRampToValueAtTime(0.06, start + 0.4);
-        gain.gain.setValueAtTime(0.06, start + dur * 0.7);
-        gain.gain.linearRampToValueAtTime(0, start + dur);
+        gain.gain.setValueAtTime(0.06, start + duration * 0.7);
+        gain.gain.linearRampToValueAtTime(0, start + duration);
 
-        osc.connect(filter);
+        oscillator.connect(filter);
         filter.connect(gain);
         gain.connect(musicGain);
-        osc.start(start);
-        osc.stop(start + dur + 0.05);
+        oscillator.start(start);
+        oscillator.stop(start + duration + 0.05);
 
-        resultsNodes.push(osc, gain, filter);
+        resultsNodes.push(oscillator, gain, filter);
 
         // Triangle layer (slightly higher, adds shimmer)
-        const osc2 = audioCtx.createOscillator();
+        const oscillator2 = audioCtx.createOscillator();
         const gain2 = audioCtx.createGain();
 
-        osc2.type = 'triangle';
-        osc2.frequency.value = freq;
+        oscillator2.type = 'triangle';
+        oscillator2.frequency.value = freq;
         gain2.gain.value = 0;
 
         gain2.gain.setValueAtTime(0, start);
         gain2.gain.linearRampToValueAtTime(0.025, start + 0.5);
-        gain2.gain.setValueAtTime(0.025, start + dur * 0.6);
-        gain2.gain.linearRampToValueAtTime(0, start + dur);
+        gain2.gain.setValueAtTime(0.025, start + duration * 0.6);
+        gain2.gain.linearRampToValueAtTime(0, start + duration);
 
-        osc2.connect(gain2);
+        oscillator2.connect(gain2);
         gain2.connect(musicGain);
-        osc2.start(start);
-        osc2.stop(start + dur + 0.05);
+        oscillator2.start(start);
+        oscillator2.stop(start + duration + 0.05);
 
-        resultsNodes.push(osc2, gain2);
+        resultsNodes.push(oscillator2, gain2);
       });
     });
 
@@ -362,28 +362,28 @@ function startResultsMusic() {
     melodyNotes.forEach((freq, i) => {
       if (freq === 0) return; // rest
 
-      const osc = audioCtx.createOscillator();
+      const oscillator = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
-      osc.type = 'sine';
-      osc.frequency.value = freq;
+      oscillator.type = 'sine';
+      oscillator.frequency.value = freq;
       gain.gain.value = 0;
 
       const noteSpacing = loopDur / melodyNotes.length;
       const start = now + i * noteSpacing;
-      const dur = noteSpacing * 1.5;
+      const duration = noteSpacing * 1.5;
 
       gain.gain.setValueAtTime(0, start);
       gain.gain.linearRampToValueAtTime(0.08, start + 0.05);
-      gain.gain.setValueAtTime(0.08, start + dur * 0.3);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+      gain.gain.setValueAtTime(0.08, start + duration * 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
 
-      osc.connect(gain);
+      oscillator.connect(gain);
       gain.connect(musicGain);
-      osc.start(start);
-      osc.stop(start + dur + 0.05);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.05);
 
-      resultsNodes.push(osc, gain);
+      resultsNodes.push(oscillator, gain);
     });
 
     // Schedule next loop
@@ -419,11 +419,11 @@ function playClick() {
   ensureContext();
   resumeContext();
 
-  const osc = audioCtx.createOscillator();
+  const oscillator = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
 
-  osc.type = 'sine';
-  osc.frequency.value = 1200;
+  oscillator.type = 'sine';
+  oscillator.frequency.value = 1200;
   gain.gain.value = 0;
 
   const now = audioCtx.currentTime;
@@ -431,13 +431,13 @@ function playClick() {
   gain.gain.linearRampToValueAtTime(0.3, now + 0.005);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
 
-  osc.frequency.setValueAtTime(1200, now);
-  osc.frequency.exponentialRampToValueAtTime(800, now + 0.06);
+  oscillator.frequency.setValueAtTime(1200, now);
+  oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.06);
 
-  osc.connect(gain);
+  oscillator.connect(gain);
   gain.connect(sfxGain);
-  osc.start(now);
-  osc.stop(now + 0.08);
+  oscillator.start(now);
+  oscillator.stop(now + 0.08);
 }
 
 /**
@@ -454,11 +454,11 @@ function startTimerWarning() {
   function tick() {
     if (!timerWarningActive) return;
 
-    const osc = audioCtx.createOscillator();
+    const oscillator = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    osc.type = 'sine';
-    osc.frequency.value = 880;
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 880;
     gain.gain.value = 0;
 
     const now = audioCtx.currentTime;
@@ -466,10 +466,10 @@ function startTimerWarning() {
     gain.gain.linearRampToValueAtTime(0.2, now + 0.02);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
 
-    osc.connect(gain);
+    oscillator.connect(gain);
     gain.connect(sfxGain);
-    osc.start(now);
-    osc.stop(now + 0.18);
+    oscillator.start(now);
+    oscillator.stop(now + 0.18);
 
     timerWarningNodes.push(
       setTimeout(tick, 600)
@@ -499,52 +499,52 @@ function playCelebration() {
   const notes = [261.63, 329.63, 392, 493.88, 523.25];
 
   notes.forEach((freq, i) => {
-    const osc = audioCtx.createOscillator();
+    const oscillator = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    osc.type = 'sine';
-    osc.frequency.value = freq;
+    oscillator.type = 'sine';
+    oscillator.frequency.value = freq;
     gain.gain.value = 0;
 
     const start = now + i * 0.25;
-    const dur = 1.8 - i * 0.15;
+    const duration = 1.8 - i * 0.15;
 
     gain.gain.setValueAtTime(0, start);
     gain.gain.linearRampToValueAtTime(0.2, start + 0.08);
-    gain.gain.setValueAtTime(0.2, start + dur * 0.5);
-    gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    gain.gain.setValueAtTime(0.2, start + duration * 0.5);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
 
-    osc.connect(gain);
+    oscillator.connect(gain);
     gain.connect(sfxGain);
-    osc.start(start);
-    osc.stop(start + dur + 0.05);
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.05);
   });
 
   // Soft pad layer: warm sustained chord (C + G, low)
   [130.81, 196].forEach((freq) => {
-    const osc = audioCtx.createOscillator();
+    const oscillator = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     const filter = audioCtx.createBiquadFilter();
 
-    osc.type = 'triangle';
-    osc.frequency.value = freq;
+    oscillator.type = 'triangle';
+    oscillator.frequency.value = freq;
     filter.type = 'lowpass';
     filter.frequency.value = 600;
     gain.gain.value = 0;
 
     const start = now + 0.3;
-    const dur = 2.5;
+    const duration = 2.5;
 
     gain.gain.setValueAtTime(0, start);
     gain.gain.linearRampToValueAtTime(0.12, start + 0.3);
-    gain.gain.setValueAtTime(0.12, start + dur * 0.6);
-    gain.gain.linearRampToValueAtTime(0, start + dur);
+    gain.gain.setValueAtTime(0.12, start + duration * 0.6);
+    gain.gain.linearRampToValueAtTime(0, start + duration);
 
-    osc.connect(filter);
+    oscillator.connect(filter);
     filter.connect(gain);
     gain.connect(sfxGain);
-    osc.start(start);
-    osc.stop(start + dur + 0.05);
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.05);
   });
 
   // Gentle chime at the end
@@ -573,11 +573,11 @@ function playCountdownBeep() {
   ensureContext();
   resumeContext();
 
-  const osc = audioCtx.createOscillator();
+  const oscillator = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
 
-  osc.type = 'sine';
-  osc.frequency.value = 660;
+  oscillator.type = 'sine';
+  oscillator.frequency.value = 660;
   gain.gain.value = 0;
 
   const now = audioCtx.currentTime;
@@ -586,10 +586,10 @@ function playCountdownBeep() {
   gain.gain.setValueAtTime(0.25, now + 0.08);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
 
-  osc.connect(gain);
+  oscillator.connect(gain);
   gain.connect(sfxGain);
-  osc.start(now);
-  osc.stop(now + 0.25);
+  oscillator.start(now);
+  oscillator.stop(now + 0.25);
 }
 
 /**
@@ -599,11 +599,11 @@ function playCountdownGo() {
   ensureContext();
   resumeContext();
 
-  const osc = audioCtx.createOscillator();
+  const oscillator = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
 
-  osc.type = 'sine';
-  osc.frequency.value = 1320;
+  oscillator.type = 'sine';
+  oscillator.frequency.value = 1320;
   gain.gain.value = 0;
 
   const now = audioCtx.currentTime;
@@ -612,10 +612,10 @@ function playCountdownGo() {
   gain.gain.setValueAtTime(0.3, now + 0.15);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
-  osc.connect(gain);
+  oscillator.connect(gain);
   gain.connect(sfxGain);
-  osc.start(now);
-  osc.stop(now + 0.45);
+  oscillator.start(now);
+  oscillator.stop(now + 0.45);
 }
 
 // ============================================================
@@ -699,18 +699,18 @@ function createMuteButton() {
   // Avoid duplicate
   if (document.getElementById('btn-audio-toggle')) return;
 
-  const btn = document.createElement('button');
-  btn.id = 'btn-audio-toggle';
-  btn.className = 'audio-toggle-btn';
-  btn.setAttribute('aria-label', isMuted ? 'Activar sonido' : 'Silenciar');
-  btn.setAttribute('type', 'button');
+  const button = document.createElement('button');
+  button.id = 'btn-audio-toggle';
+  button.className = 'audio-toggle-btn';
+  button.setAttribute('aria-label', isMuted ? 'Activar sonido' : 'Silenciar');
+  button.setAttribute('type', 'button');
 
-  btn.innerHTML = `<span class="audio-icon">${isMuted ? '\uD83D\uDD07' : '\uD83D\uDD0A'}</span>`;
+  button.innerHTML = `<span class="audio-icon">${isMuted ? '\uD83D\uDD07' : '\uD83D\uDD0A'}</span>`;
 
-  btn.addEventListener('click', (e) => {
+  button.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleMute();
   });
 
-  document.body.appendChild(btn);
+  document.body.appendChild(button);
 }
