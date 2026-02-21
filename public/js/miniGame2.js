@@ -12,90 +12,85 @@ const SEARCH_SVG = `<svg class="search-icon" viewBox="0 0 24 24" width="18" heig
   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
 </svg>`;
 
-export function createMiniGame2Templates() {
-  const frag = document.createDocumentFragment();
-  const wrap = document.createElement('div');
-  wrap.innerHTML = `
-    <section id="screen-mg2-important" class="screen">
+const MG2_CONFIGS = {
+  important: {
+    screenId: 'screen-mg2-important',
+    prefix: 'mg2i',
+    headerText: 'Ronda 2/3 \u2014 Muy Importante',
+    options: MG2_IMPORTANT_OPTIONS,
+    chipClass: 'chip',
+    phase: PHASES.MG2_IMPORTANT,
+  },
+  nowant: {
+    screenId: 'screen-mg2-nowant',
+    prefix: 'mg2n',
+    headerText: 'Ronda 2/3 \u2014 NO Quiero',
+    options: MG2_NOWANT_OPTIONS,
+    chipClass: 'chip chip-nowant',
+    phase: PHASES.MG2_NOWANT,
+  },
+};
+
+function createMG2Screen(cfg) {
+  return `
+    <section id="${cfg.screenId}" class="screen">
       <div class="screen-content game-content">
         <div class="game-header">
-          <span class="phase-indicator">Ronda 2/3 \u2014 Muy Importante</span>
+          <span class="phase-indicator">${cfg.headerText}</span>
         </div>
         <div class="timer-container">
-          <div id="mg2i-timer-bar" class="timer-bar">
+          <div id="${cfg.prefix}-timer-bar" class="timer-bar">
             <div class="timer-bar-fill" style="width: 100%"></div>
           </div>
-          <span id="mg2i-timer" class="timer-number">40</span>
+          <span id="${cfg.prefix}-timer" class="timer-number">40</span>
         </div>
         <div class="search-wrapper">
           ${SEARCH_SVG}
-          <input id="mg2i-search" type="text" class="search-input" placeholder="Buscar...">
+          <input id="${cfg.prefix}-search" type="text" class="search-input" placeholder="Buscar...">
         </div>
-        <p id="mg2i-count" class="selection-counter">0/3 seleccionadas</p>
-        <div id="mg2i-options" class="options-grid scrollable"></div>
-        <button id="mg2i-confirm" class="btn btn-primary" disabled>Confirmar</button>
-        <div id="mg2i-partner-status" class="partner-status hidden">
-          <span class="pulse-dot"></span>
-          <span>El otro jugador est\u00E1 eligiendo...</span>
-        </div>
-      </div>
-    </section>
-    <section id="screen-mg2-nowant" class="screen">
-      <div class="screen-content game-content">
-        <div class="game-header">
-          <span class="phase-indicator">Ronda 2/3 \u2014 NO Quiero</span>
-        </div>
-        <div class="timer-container">
-          <div id="mg2n-timer-bar" class="timer-bar">
-            <div class="timer-bar-fill" style="width: 100%"></div>
-          </div>
-          <span id="mg2n-timer" class="timer-number">40</span>
-        </div>
-        <div class="search-wrapper">
-          ${SEARCH_SVG}
-          <input id="mg2n-search" type="text" class="search-input" placeholder="Buscar...">
-        </div>
-        <p id="mg2n-count" class="selection-counter">0/3 seleccionadas</p>
-        <div id="mg2n-options" class="options-grid scrollable"></div>
-        <button id="mg2n-confirm" class="btn btn-primary" disabled>Confirmar</button>
-        <div id="mg2n-partner-status" class="partner-status hidden">
+        <p id="${cfg.prefix}-count" class="selection-counter">0/3 seleccionadas</p>
+        <div id="${cfg.prefix}-options" class="options-grid scrollable"></div>
+        <button id="${cfg.prefix}-confirm" class="btn btn-primary" disabled>Confirmar</button>
+        <div id="${cfg.prefix}-partner-status" class="partner-status hidden">
           <span class="pulse-dot"></span>
           <span>El otro jugador est\u00E1 eligiendo...</span>
         </div>
       </div>
     </section>`;
+}
+
+export function createMiniGame2Templates() {
+  const frag = document.createDocumentFragment();
+  const wrap = document.createElement('div');
+  wrap.innerHTML = createMG2Screen(MG2_CONFIGS.important) + createMG2Screen(MG2_CONFIGS.nowant);
   while (wrap.firstChild) frag.appendChild(wrap.firstChild);
   return frag;
 }
 
-// ============================================================
-// MG2 Important
-// ============================================================
-
-export function renderMiniGame2Important() {
+function renderMG2(cfg) {
   state.currentSelections = [];
   state.answered = false;
   state.partnerAnswered = false;
 
-  const container = $('mg2i-options');
+  const container = $(`${cfg.prefix}-options`);
   container.innerHTML = '';
 
-  MG2_IMPORTANT_OPTIONS.forEach((opt) => {
+  cfg.options.forEach((opt) => {
     const chip = document.createElement('button');
-    chip.className = 'chip';
+    chip.className = cfg.chipClass;
     chip.dataset.id = opt.id;
     chip.innerHTML = `<span class="chip-icon">${opt.icon}</span><span class="chip-label">${opt.label}</span>`;
     container.appendChild(chip);
   });
 
-  $('mg2i-search').value = '';
-  $('mg2i-count').textContent = '0/3 seleccionadas';
-  $('mg2i-confirm').disabled = true;
-  $('mg2i-partner-status').classList.add('hidden');
+  $(`${cfg.prefix}-search`).value = '';
+  $(`${cfg.prefix}-count`).textContent = '0/3 seleccionadas';
+  $(`${cfg.prefix}-confirm`).disabled = true;
+  $(`${cfg.prefix}-partner-status`).classList.add('hidden');
 }
 
-export function setupMiniGame2Important() {
-  $('mg2i-options').addEventListener('click', (e) => {
+function setupMG2(cfg) {
+  $(`${cfg.prefix}-options`).addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (!chip || chip.classList.contains('disabled') || state.answered) return;
 
@@ -105,117 +100,46 @@ export function setupMiniGame2Important() {
     if (chip.classList.contains('selected')) {
       chip.classList.remove('selected');
       state.currentSelections = state.currentSelections.filter((id) => id !== optionId);
-      $('mg2i-options').querySelectorAll('.chip').forEach((c) => c.classList.remove('disabled'));
+      $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.remove('disabled'));
     } else {
       if (state.currentSelections.length < 3) {
         chip.classList.add('selected');
         state.currentSelections.push(optionId);
         if (state.currentSelections.length >= 3) {
-          $('mg2i-options').querySelectorAll('.chip').forEach((c) => {
+          $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((c) => {
             if (!c.classList.contains('selected')) c.classList.add('disabled');
           });
         }
       }
     }
 
-    $('mg2i-count').textContent = `${state.currentSelections.length}/3 seleccionadas`;
-    $('mg2i-confirm').disabled = state.currentSelections.length !== 3;
+    $(`${cfg.prefix}-count`).textContent = `${state.currentSelections.length}/3 seleccionadas`;
+    $(`${cfg.prefix}-confirm`).disabled = state.currentSelections.length !== 3;
   });
 
-  $('mg2i-search').addEventListener('input', (e) => {
+  $(`${cfg.prefix}-search`).addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim();
-    $('mg2i-options').querySelectorAll('.chip').forEach((chip) => {
+    $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((chip) => {
       const label = chip.querySelector('.chip-label').textContent.toLowerCase();
       chip.style.display = (query === '' || label.includes(query)) ? '' : 'none';
     });
   });
 
-  $('mg2i-confirm').addEventListener('click', () => {
+  $(`${cfg.prefix}-confirm`).addEventListener('click', () => {
     if (state.currentSelections.length !== 3 || state.answered) return;
     haptic('heavy');
     state.answered = true;
 
-    send({ type: MSG.SUBMIT_ANSWER, phase: PHASES.MG2_IMPORTANT, answer: [...state.currentSelections] });
+    send({ type: MSG.SUBMIT_ANSWER, phase: cfg.phase, answer: [...state.currentSelections] });
 
-    $('mg2i-confirm').disabled = true;
-    $('mg2i-options').querySelectorAll('.chip').forEach((c) => c.classList.add('disabled'));
+    $(`${cfg.prefix}-confirm`).disabled = true;
+    $(`${cfg.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.add('disabled'));
 
-    if (!state.partnerAnswered) $('mg2i-partner-status').classList.remove('hidden');
+    if (!state.partnerAnswered) $(`${cfg.prefix}-partner-status`).classList.remove('hidden');
   });
 }
 
-// ============================================================
-// MG2 No Want
-// ============================================================
-
-export function renderMiniGame2NoWant() {
-  state.currentSelections = [];
-  state.answered = false;
-  state.partnerAnswered = false;
-
-  const container = $('mg2n-options');
-  container.innerHTML = '';
-
-  MG2_NOWANT_OPTIONS.forEach((opt) => {
-    const chip = document.createElement('button');
-    chip.className = 'chip chip-nowant';
-    chip.dataset.id = opt.id;
-    chip.innerHTML = `<span class="chip-icon">${opt.icon}</span><span class="chip-label">${opt.label}</span>`;
-    container.appendChild(chip);
-  });
-
-  $('mg2n-search').value = '';
-  $('mg2n-count').textContent = '0/3 seleccionadas';
-  $('mg2n-confirm').disabled = true;
-  $('mg2n-partner-status').classList.add('hidden');
-}
-
-export function setupMiniGame2NoWant() {
-  $('mg2n-options').addEventListener('click', (e) => {
-    const chip = e.target.closest('.chip');
-    if (!chip || chip.classList.contains('disabled') || state.answered) return;
-
-    haptic();
-    const optionId = chip.dataset.id;
-
-    if (chip.classList.contains('selected')) {
-      chip.classList.remove('selected');
-      state.currentSelections = state.currentSelections.filter((id) => id !== optionId);
-      $('mg2n-options').querySelectorAll('.chip').forEach((c) => c.classList.remove('disabled'));
-    } else {
-      if (state.currentSelections.length < 3) {
-        chip.classList.add('selected');
-        state.currentSelections.push(optionId);
-        if (state.currentSelections.length >= 3) {
-          $('mg2n-options').querySelectorAll('.chip').forEach((c) => {
-            if (!c.classList.contains('selected')) c.classList.add('disabled');
-          });
-        }
-      }
-    }
-
-    $('mg2n-count').textContent = `${state.currentSelections.length}/3 seleccionadas`;
-    $('mg2n-confirm').disabled = state.currentSelections.length !== 3;
-  });
-
-  $('mg2n-search').addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim();
-    $('mg2n-options').querySelectorAll('.chip').forEach((chip) => {
-      const label = chip.querySelector('.chip-label').textContent.toLowerCase();
-      chip.style.display = (query === '' || label.includes(query)) ? '' : 'none';
-    });
-  });
-
-  $('mg2n-confirm').addEventListener('click', () => {
-    if (state.currentSelections.length !== 3 || state.answered) return;
-    haptic('heavy');
-    state.answered = true;
-
-    send({ type: MSG.SUBMIT_ANSWER, phase: PHASES.MG2_NOWANT, answer: [...state.currentSelections] });
-
-    $('mg2n-confirm').disabled = true;
-    $('mg2n-options').querySelectorAll('.chip').forEach((c) => c.classList.add('disabled'));
-
-    if (!state.partnerAnswered) $('mg2n-partner-status').classList.remove('hidden');
-  });
-}
+export function renderMiniGame2Important() { renderMG2(MG2_CONFIGS.important); }
+export function renderMiniGame2NoWant()    { renderMG2(MG2_CONFIGS.nowant); }
+export function setupMiniGame2Important()  { setupMG2(MG2_CONFIGS.important); }
+export function setupMiniGame2NoWant()     { setupMG2(MG2_CONFIGS.nowant); }
