@@ -7,6 +7,20 @@ import { PHASES } from '../data.js';
 import { haptic } from './utils.js';
 import { startTimerWarning, stopTimerWarning } from '../audio.js';
 
+// Cached DOM references — refreshed when prefix (phase) changes
+let cachedPrefix = null;
+let cachedTimerEl = null;
+let cachedTimerBarEl = null;
+let cachedFillEl = null;
+
+function cacheTimerRefs(prefix) {
+  if (prefix === cachedPrefix) return;
+  cachedPrefix = prefix;
+  cachedTimerEl = $(`${prefix}-timer`);
+  cachedTimerBarEl = $(`${prefix}-timer-bar`);
+  cachedFillEl = cachedTimerBarEl ? cachedTimerBarEl.querySelector('.timer-bar-fill') : null;
+}
+
 export function handleTimerTick(data) {
   const remaining = data.remaining;
   const total = data.total || state.timerTotal || remaining;
@@ -34,39 +48,35 @@ export function handleTimerTick(data) {
 }
 
 export function updateTimerBar(prefix, remaining, total) {
-  const timerEl = $(`${prefix}-timer`);
-  const timerBarEl = $(`${prefix}-timer-bar`);
+  cacheTimerRefs(prefix);
 
-  if (timerEl) {
-    timerEl.textContent = remaining;
+  if (cachedTimerEl) {
+    cachedTimerEl.textContent = remaining;
   }
 
-  if (timerBarEl) {
-    const fill = timerBarEl.querySelector('.timer-bar-fill');
-    if (fill) {
-      const percentage = total > 0 ? (remaining / total) * 100 : 0;
+  if (cachedFillEl) {
+    const percentage = total > 0 ? (remaining / total) * 100 : 0;
 
-      requestAnimationFrame(() => {
-        fill.style.width = `${percentage}%`;
+    requestAnimationFrame(() => {
+      cachedFillEl.style.width = `${percentage}%`;
 
-        fill.classList.remove('timer-warning', 'timer-danger');
-        if (remaining <= 5) {
-          fill.classList.add('timer-danger');
-          if (remaining === 5) {
-            timerBarEl.classList.add('shake');
-            haptic('heavy');
-            startTimerWarning();
-            setTimeout(() => timerBarEl.classList.remove('shake'), 500);
-          }
-        } else if (remaining <= 10) {
-          fill.classList.add('timer-warning');
+      cachedFillEl.classList.remove('timer-warning', 'timer-danger');
+      if (remaining <= 5) {
+        cachedFillEl.classList.add('timer-danger');
+        if (remaining === 5) {
+          cachedTimerBarEl.classList.add('shake');
+          haptic('heavy');
+          startTimerWarning();
+          setTimeout(() => cachedTimerBarEl.classList.remove('shake'), 500);
         }
+      } else if (remaining <= 10) {
+        cachedFillEl.classList.add('timer-warning');
+      }
 
-        if (remaining > 5 || remaining <= 0) {
-          stopTimerWarning();
-        }
-      });
-    }
+      if (remaining > 5 || remaining <= 0) {
+        stopTimerWarning();
+      }
+    });
   }
 }
 
