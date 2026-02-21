@@ -7,17 +7,17 @@ import { state, $ } from './state.js';
 import { MSG, PHASES } from '../data.js';
 import { initAudio, requestMusicStop, stopTimerWarning } from '../audio.js';
 import { connectWS, send, setMessageHandler } from './ws.js';
-import { showScreen, showError, showDisconnectOverlay, hideDisconnectOverlay, updateDisconnectCountdown, showAborted } from './screens.js';
+import { createOverlayTemplates, showScreen, showError, showDisconnectOverlay, hideDisconnectOverlay, updateDisconnectCountdown, showAborted } from './screens.js';
 import { haptic } from './utils.js';
 import { handleTimerTick, handleTimerExtended } from './timers.js';
-import { setupLobby, handleRoomCreated, handlePlayerJoined } from './lobby.js';
-import { showIntroScreen, setupIntro, showPartnerIntroReady } from './intro.js';
-import { showReadyScreen, setupReadyCheck, showCountdown } from './ready.js';
-import { showInstructions, showPartnerInstructionsReady, setupInstructions } from './instructions.js';
-import { showQuestion, setupMiniGame1 } from './miniGame1.js';
-import { renderMiniGame2Important, setupMiniGame2Important, renderMiniGame2NoWant, setupMiniGame2NoWant } from './miniGame2.js';
-import { renderMiniGame3Sliders, setupMiniGame3 } from './miniGame3.js';
-import { showResults, setupShareResults, setupRematch, resetForRematch } from './results.js';
+import { createLobbyTemplates, setupLobby, handleRoomCreated, handlePlayerJoined } from './lobby.js';
+import { createIntroTemplate, showIntroScreen, setupIntro, showPartnerIntroReady } from './intro.js';
+import { createReadyTemplate, showReadyScreen, setupReadyCheck, showCountdown } from './ready.js';
+import { createInstructionsTemplate, showInstructions, showPartnerInstructionsReady, setupInstructions } from './instructions.js';
+import { createMiniGame1Template, showQuestion, setupMiniGame1 } from './miniGame1.js';
+import { createMiniGame2Templates, renderMiniGame2Important, setupMiniGame2Important, renderMiniGame2NoWant, setupMiniGame2NoWant } from './miniGame2.js';
+import { createMiniGame3Template, renderMiniGame3Sliders, setupMiniGame3 } from './miniGame3.js';
+import { createResultsTemplate, showResults, setupShareResults, setupRematch, resetForRematch } from './results.js';
 
 // ============================================================
 // Message Router
@@ -175,6 +175,21 @@ function setupErrorOverlay() {
 // ============================================================
 
 function init() {
+  // Mount all screen templates before any setup
+  const app = $('app');
+  app.appendChild(createLobbyTemplates());
+  app.appendChild(createIntroTemplate());
+  app.appendChild(createReadyTemplate());
+  app.appendChild(createInstructionsTemplate());
+  app.appendChild(createMiniGame1Template());
+  app.appendChild(createMiniGame2Templates());
+  app.appendChild(createMiniGame3Template());
+  app.appendChild(createResultsTemplate());
+
+  // Overlays on body, before script tag
+  const scriptTag = document.body.querySelector('script');
+  document.body.insertBefore(createOverlayTemplates(), scriptTag);
+
   initAudio();
   setMessageHandler(routeMessage);
   connectWS();

@@ -9,6 +9,26 @@ import { showScreen } from './screens.js';
 import { haptic } from './utils.js';
 import { clearTimers } from './timers.js';
 
+export function createInstructionsTemplate() {
+  const section = document.createElement('section');
+  section.id = 'screen-instructions';
+  section.className = 'screen';
+  section.innerHTML = `
+    <div class="screen-content instructions-content">
+      <div id="instr-icon" class="instr-icon"></div>
+      <h2 id="instr-title" class="instr-title"></h2>
+      <p id="instr-subtitle" class="instr-subtitle"></p>
+      <ul id="instr-rules" class="instr-rules"></ul>
+      <button id="btn-instr-next" class="btn btn-primary">Siguiente</button>
+      <div id="instr-partner-status" class="partner-status hidden">
+        <span class="pulse-dot"></span>
+        <span>Esperando al otro jugador...</span>
+      </div>
+      <div class="instr-auto">Avanza autom\u00E1ticamente en <span id="instr-countdown">5</span>s</div>
+    </div>`;
+  return section;
+}
+
 export function showInstructions(phase) {
   let instrKey;
   if (phase === PHASES.MG1) instrKey = 'mg1';

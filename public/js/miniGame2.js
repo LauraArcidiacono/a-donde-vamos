@@ -7,6 +7,67 @@ import { MSG, PHASES, MG2_IMPORTANT_OPTIONS, MG2_NOWANT_OPTIONS } from '../data.
 import { send } from './ws.js';
 import { haptic } from './utils.js';
 
+const SEARCH_SVG = `<svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="11" cy="11" r="8"/>
+  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+</svg>`;
+
+export function createMiniGame2Templates() {
+  const frag = document.createDocumentFragment();
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <section id="screen-mg2-important" class="screen">
+      <div class="screen-content game-content">
+        <div class="game-header">
+          <span class="phase-indicator">Ronda 2/3 \u2014 Muy Importante</span>
+        </div>
+        <div class="timer-container">
+          <div id="mg2i-timer-bar" class="timer-bar">
+            <div class="timer-bar-fill" style="width: 100%"></div>
+          </div>
+          <span id="mg2i-timer" class="timer-number">40</span>
+        </div>
+        <div class="search-wrapper">
+          ${SEARCH_SVG}
+          <input id="mg2i-search" type="text" class="search-input" placeholder="Buscar...">
+        </div>
+        <p id="mg2i-count" class="selection-counter">0/3 seleccionadas</p>
+        <div id="mg2i-options" class="options-grid scrollable"></div>
+        <button id="mg2i-confirm" class="btn btn-primary" disabled>Confirmar</button>
+        <div id="mg2i-partner-status" class="partner-status hidden">
+          <span class="pulse-dot"></span>
+          <span>El otro jugador est\u00E1 eligiendo...</span>
+        </div>
+      </div>
+    </section>
+    <section id="screen-mg2-nowant" class="screen">
+      <div class="screen-content game-content">
+        <div class="game-header">
+          <span class="phase-indicator">Ronda 2/3 \u2014 NO Quiero</span>
+        </div>
+        <div class="timer-container">
+          <div id="mg2n-timer-bar" class="timer-bar">
+            <div class="timer-bar-fill" style="width: 100%"></div>
+          </div>
+          <span id="mg2n-timer" class="timer-number">40</span>
+        </div>
+        <div class="search-wrapper">
+          ${SEARCH_SVG}
+          <input id="mg2n-search" type="text" class="search-input" placeholder="Buscar...">
+        </div>
+        <p id="mg2n-count" class="selection-counter">0/3 seleccionadas</p>
+        <div id="mg2n-options" class="options-grid scrollable"></div>
+        <button id="mg2n-confirm" class="btn btn-primary" disabled>Confirmar</button>
+        <div id="mg2n-partner-status" class="partner-status hidden">
+          <span class="pulse-dot"></span>
+          <span>El otro jugador est\u00E1 eligiendo...</span>
+        </div>
+      </div>
+    </section>`;
+  while (wrap.firstChild) frag.appendChild(wrap.firstChild);
+  return frag;
+}
+
 // ============================================================
 // MG2 Important
 // ============================================================

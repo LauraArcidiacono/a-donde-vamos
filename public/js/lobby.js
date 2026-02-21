@@ -8,6 +8,67 @@ import { send, sendOrReconnect, connectWS } from './ws.js';
 import { showScreen } from './screens.js';
 import { haptic, copyToClipboard, showToast } from './utils.js';
 
+export function createLobbyTemplates() {
+  const frag = document.createDocumentFragment();
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <section id="screen-lobby" class="screen active">
+      <div class="screen-content lobby-content">
+        <div class="lobby-header">
+          <h1 class="app-title">\u00BFA D\u00F3nde Vamos?</h1>
+          <p class="app-subtitle">Descubrid juntos vuestro destino ideal</p>
+        </div>
+        <div class="lobby-actions">
+          <input type="text" id="input-name" class="name-input" placeholder="Tu nombre" maxlength="15" autocomplete="off">
+          <button id="btn-create" class="btn btn-primary">Crear sala</button>
+          <button id="btn-solo" class="btn btn-small btn-ghost">Modo prueba</button>
+          <div class="divider"><span>\u2014 o \u2014</span></div>
+          <div class="join-group">
+            <label class="join-label" for="input-code">Unirse a sala</label>
+            <div class="join-row">
+              <input id="input-code" type="text" class="input-code" maxlength="4" placeholder="ABCD" autocomplete="off" autocapitalize="characters" spellcheck="false">
+              <button id="btn-join" class="btn btn-secondary">Entrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="screen-waiting" class="screen">
+      <div class="screen-content waiting-content">
+        <h2 class="screen-heading">Tu sala est\u00E1 lista</h2>
+        <div class="room-code-box">
+          <span class="room-code-label">C\u00F3digo de sala</span>
+          <span id="room-code" class="room-code">----</span>
+        </div>
+        <div class="qr-wrapper hidden">
+          <span class="qr-label">Escanea para unirte</span>
+          <canvas id="qr-code"></canvas>
+        </div>
+        <div class="share-buttons">
+          <button id="btn-share-whatsapp" class="btn btn-whatsapp btn-small">
+            <span class="btn-icon">\u{1F4AC}</span>
+            Enviar por WhatsApp
+          </button>
+          <button id="btn-share-link" class="btn btn-secondary btn-small">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            Copiar link
+          </button>
+        </div>
+        <div class="waiting-status-box">
+          <span class="pulse-dot"></span>
+          <span id="waiting-status">Esperando al otro jugador...</span>
+        </div>
+        <div id="player-count" class="player-count">1 / 2 jugadores</div>
+      </div>
+    </section>`;
+  while (wrap.firstChild) frag.appendChild(wrap.firstChild);
+  return frag;
+}
+
 export function setupLobby() {
   $('btn-create').addEventListener('click', () => {
     haptic();

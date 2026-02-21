@@ -14,6 +14,41 @@ import {
   stopTimerWarning,
 } from '../audio.js';
 
+export function createResultsTemplate() {
+  const section = document.createElement('section');
+  section.id = 'screen-results';
+  section.className = 'screen';
+  section.innerHTML = `
+    <div class="screen-content results-content">
+      <h2 class="results-title">\u00A1Resultados!</h2>
+      <div id="results-tabs" class="results-tabs">
+        <button class="tab active" data-tab="p1">Tu top</button>
+        <button class="tab" data-tab="p2">Su top</button>
+        <button class="tab" data-tab="combined">Combinado</button>
+      </div>
+      <div id="results-p1" class="results-panel active"></div>
+      <div id="results-p2" class="results-panel"></div>
+      <div id="results-combined" class="results-panel"></div>
+      <div id="results-coincidences" class="results-coincidences"></div>
+      <details id="results-penalties" class="results-penalties">
+        <summary>Ajustes por tus \u00ABno quiero\u00BB</summary>
+        <div class="penalties-content"></div>
+      </details>
+      <div class="results-actions">
+        <button id="btn-rematch" class="btn btn-primary">Revancha</button>
+        <button id="btn-share-results" class="btn btn-secondary btn-small">
+          <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+            <polyline points="16 6 12 2 8 6"/>
+            <line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
+          Compartir resultado
+        </button>
+      </div>
+    </div>`;
+  return section;
+}
+
 export function showResults(results) {
   state.currentPhase = PHASES.RESULTS;
   showScreen('screen-results');
