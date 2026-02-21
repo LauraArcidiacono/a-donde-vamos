@@ -18,7 +18,7 @@
     "titleBar.inactiveBackground": "#14b8a699",
     "titleBar.inactiveForeground": "#15202b99",
     "commandCenter.border": "#15202b99"
-},
+  },
   "peacock.color": "#14B8A6",
   "cSpell.words": [
     "adduser",

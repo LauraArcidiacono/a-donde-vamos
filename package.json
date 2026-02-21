@@ -2,6 +2,7 @@
   "name": "a-donde-vamos",
   "version": "1.0.0",
   "description": "Real-time 2-player travel destination picker game",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
