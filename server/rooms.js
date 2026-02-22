@@ -1,5 +1,10 @@
+import crypto from 'crypto';
 import { PHASES, MSG } from '../public/data.js';
 import { clearRoomTimer } from './timers.js';
+
+const ROOM_INACTIVE_MS = 30 * 60 * 1000; // 30 minutes
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // check every 5 minutes
+let cleanupInterval = null;
 
 export const rooms = new Map();
 
@@ -9,14 +14,14 @@ function generateRoomCode() {
   do {
     code = '';
     for (let i = 0; i < 4; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
+      code += chars[crypto.randomInt(chars.length)];
     }
   } while (rooms.has(code));
   return code;
 }
 
 function generatePlayerId() {
-  return 'p_' + Math.random().toString(36).substring(2, 10);
+  return 'p_' + crypto.randomBytes(6).toString('hex');
 }
 
 export function createRoom(soloMode = false) {
@@ -36,7 +41,8 @@ export function createRoom(soloMode = false) {
     aborted: false,
     instructionsReady: new Set(),
     instructionsTimer: null,
-    introReady: new Set()
+    introReady: new Set(),
+    lastActivity: Date.now()
   };
   rooms.set(code, room);
   return room;
@@ -97,6 +103,30 @@ export function cleanupRoom(code) {
     clearTimeout(timer.timeout);
   }
   rooms.delete(code);
+}
+
+// Room activity tracking & auto-cleanup
+
+export function touchRoom(room) {
+  room.lastActivity = Date.now();
+}
+
+export function startRoomCleanup() {
+  cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    for (const [code, room] of rooms) {
+      if (now - room.lastActivity > ROOM_INACTIVE_MS) {
+        cleanupRoom(code);
+      }
+    }
+  }, CLEANUP_INTERVAL_MS);
+}
+
+export function stopRoomCleanup() {
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval);
+    cleanupInterval = null;
+  }
 }
 
 // WebSocket helpers

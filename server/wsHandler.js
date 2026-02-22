@@ -8,6 +8,7 @@ import {
   send,
   sendError,
   broadcast,
+  touchRoom,
 } from './rooms.js';
 import {
   handleSubmitAnswer,
@@ -79,6 +80,8 @@ export function handleMessage(ws, rawData) {
         return;
       }
 
+      touchRoom(room);
+
       // Check if this is a reconnection
       const existingPlayer = room.players.find(p =>
         !p.isBot && !p.connected && data.playerId && p.id === data.playerId
@@ -131,6 +134,7 @@ export function handleMessage(ws, rawData) {
         sendError(ws, 'No estas en una sala');
         return;
       }
+      touchRoom(room);
 
       if (room.phase !== PHASES.LOBBY && room.phase !== PHASES.READY) {
         sendError(ws, 'La partida ya ha empezado');
@@ -151,6 +155,7 @@ export function handleMessage(ws, rawData) {
         sendError(ws, 'No estas en una sala');
         return;
       }
+      touchRoom(room);
       handleSubmitAnswer(room, player, data);
       break;
     }
@@ -161,6 +166,7 @@ export function handleMessage(ws, rawData) {
         sendError(ws, 'No estas en una sala');
         return;
       }
+      touchRoom(room);
       handleRequestExtend(room, player, data);
       break;
     }
@@ -171,6 +177,7 @@ export function handleMessage(ws, rawData) {
         sendError(ws, 'No estas en una sala');
         return;
       }
+      touchRoom(room);
       if (room.phase !== PHASES.RESULTS) {
         sendError(ws, 'Solo se puede pedir revancha en la pantalla de resultados');
         return;
@@ -182,6 +189,7 @@ export function handleMessage(ws, rawData) {
     case 'instructions_done': {
       const { room: instrRoom, player: instrPlayer } = findRoomByWs(ws);
       if (instrRoom && instrPlayer) {
+        touchRoom(instrRoom);
         handleInstructionsDone(instrRoom, instrPlayer);
       }
       break;
@@ -190,6 +198,7 @@ export function handleMessage(ws, rawData) {
     case 'intro_done': {
       const { room: introRoom, player: introPlayer } = findRoomByWs(ws);
       if (introRoom && introPlayer) {
+        touchRoom(introRoom);
         handleIntroDone(introRoom, introPlayer);
       }
       break;
