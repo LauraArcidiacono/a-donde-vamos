@@ -12,13 +12,14 @@ export function createLobbyTemplates() {
   const fragment = document.createDocumentFragment();
   const wrapper = document.createElement('div');
   wrapper.innerHTML = `
-    <section id="screen-lobby" class="screen active">
+    <section id="screen-lobby" class="screen active" aria-label="Lobby - Inicio del juego">
       <div class="screen-content lobby-content">
         <div class="lobby-header">
           <h1 class="app-title">\u00BFA D\u00F3nde Vamos?</h1>
           <p class="app-subtitle">Descubrid juntos vuestro destino ideal</p>
         </div>
         <div class="lobby-actions">
+          <label for="input-name" class="sr-only">Tu nombre</label>
           <input type="text" id="input-name" class="name-input" placeholder="Tu nombre" maxlength="15" autocomplete="off">
           <button id="btn-create" class="btn btn-primary">Crear sala</button>
           <button id="btn-solo" class="btn btn-small btn-ghost">Modo prueba</button>
@@ -26,14 +27,15 @@ export function createLobbyTemplates() {
           <div class="join-group">
             <label class="join-label" for="input-code">Unirse a sala</label>
             <div class="join-row">
-              <input id="input-code" type="text" class="input-code" maxlength="4" placeholder="ABCD" autocomplete="off" autocapitalize="characters" spellcheck="false">
+              <input id="input-code" type="text" class="input-code" maxlength="4" placeholder="ABCD" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="code-error">
               <button id="btn-join" class="btn btn-secondary">Entrar</button>
             </div>
+            <span id="code-error" class="sr-only" aria-live="assertive"></span>
           </div>
         </div>
       </div>
     </section>
-    <section id="screen-waiting" class="screen">
+    <section id="screen-waiting" class="screen" aria-label="Sala de espera">
       <div class="screen-content waiting-content">
         <h2 class="screen-heading">Tu sala est\u00E1 lista</h2>
         <div class="room-code-box">
@@ -42,7 +44,7 @@ export function createLobbyTemplates() {
         </div>
         <div class="qr-wrapper hidden">
           <span class="qr-label">Escanea para unirte</span>
-          <canvas id="qr-code"></canvas>
+          <canvas id="qr-code" role="img" aria-label="C\u00F3digo QR para unirse a la sala"></canvas>
         </div>
         <div class="share-buttons">
           <button id="btn-share-whatsapp" class="btn btn-whatsapp btn-small">
@@ -50,7 +52,7 @@ export function createLobbyTemplates() {
             Enviar por WhatsApp
           </button>
           <button id="btn-share-link" class="btn btn-secondary btn-small">
-            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
               <polyline points="16 6 12 2 8 6"/>
               <line x1="12" y1="2" x2="12" y2="15"/>
@@ -60,9 +62,9 @@ export function createLobbyTemplates() {
         </div>
         <div class="waiting-status-box">
           <span class="pulse-dot"></span>
-          <span id="waiting-status">Esperando al otro jugador...</span>
+          <span id="waiting-status" aria-live="polite">Esperando al otro jugador...</span>
         </div>
-        <div id="player-count" class="player-count">1 / 2 jugadores</div>
+        <div id="player-count" class="player-count" aria-live="polite">1 / 2 jugadores</div>
       </div>
     </section>`;
   while (wrapper.firstChild) fragment.appendChild(wrapper.firstChild);
@@ -86,7 +88,15 @@ export function setupLobby() {
   $('btn-join').addEventListener('click', () => {
     haptic();
     const code = $('input-code').value.trim().toUpperCase();
-    if (code.length !== 4) return;
+    if (code.length !== 4) {
+      const inputEl = $('input-code');
+      inputEl.classList.add('shake');
+      setTimeout(() => inputEl.classList.remove('shake'), 500);
+      const errorEl = $('code-error');
+      if (errorEl) errorEl.textContent = 'El código debe tener 4 caracteres';
+      showToast('El código debe tener 4 caracteres');
+      return;
+    }
 
     state.isJoining = true;
     if (!state.ws || state.ws.readyState !== WebSocket.OPEN) {

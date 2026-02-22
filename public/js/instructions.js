@@ -13,14 +13,15 @@ export function createInstructionsTemplate() {
   const section = document.createElement('section');
   section.id = 'screen-instructions';
   section.className = 'screen';
+  section.setAttribute('aria-label', 'Instrucciones de la ronda');
   section.innerHTML = `
     <div class="screen-content instructions-content">
-      <div id="instr-icon" class="instr-icon"></div>
+      <div id="instr-icon" class="instr-icon" aria-hidden="true"></div>
       <h2 id="instr-title" class="instr-title"></h2>
       <p id="instr-subtitle" class="instr-subtitle"></p>
       <ul id="instr-rules" class="instr-rules"></ul>
       <button id="btn-instr-next" class="btn btn-primary">Siguiente</button>
-      <div id="instr-partner-status" class="partner-status hidden">
+      <div id="instr-partner-status" class="partner-status hidden" aria-live="polite">
         <span class="pulse-dot"></span>
         <span>Esperando al otro jugador...</span>
       </div>

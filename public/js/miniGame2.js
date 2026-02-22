@@ -7,7 +7,7 @@ import { MSG, PHASES, MG2_IMPORTANT_OPTIONS, MG2_NOWANT_OPTIONS } from '../data.
 import { send } from './ws.js';
 import { haptic } from './utils.js';
 
-const SEARCH_SVG = `<svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+const SEARCH_SVG = `<svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <circle cx="11" cy="11" r="8"/>
   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
 </svg>`;
@@ -32,26 +32,30 @@ const MG2_CONFIGS = {
 };
 
 function createMG2Screen(config) {
+  const ariaLabel = config.phase === PHASES.MG2_IMPORTANT
+    ? 'Ronda 2 - Muy Importante'
+    : 'Ronda 2 - No Quiero';
   return `
-    <section id="${config.screenId}" class="screen">
+    <section id="${config.screenId}" class="screen" aria-label="${ariaLabel}">
       <div class="screen-content game-content">
         <div class="game-header">
           <span class="phase-indicator">${config.headerText}</span>
         </div>
-        <div class="timer-container">
+        <div class="timer-container" role="timer" aria-label="Tiempo restante">
           <div id="${config.prefix}-timer-bar" class="timer-bar">
             <div class="timer-bar-fill" style="width: 100%"></div>
           </div>
-          <span id="${config.prefix}-timer" class="timer-number">40</span>
+          <span id="${config.prefix}-timer" class="timer-number" aria-live="off">40</span>
         </div>
         <div class="search-wrapper">
           ${SEARCH_SVG}
+          <label for="${config.prefix}-search" class="sr-only">Buscar opciones</label>
           <input id="${config.prefix}-search" type="text" class="search-input" placeholder="Buscar...">
         </div>
-        <p id="${config.prefix}-count" class="selection-counter">0/3 seleccionadas</p>
-        <div id="${config.prefix}-options" class="options-grid scrollable"></div>
+        <p id="${config.prefix}-count" class="selection-counter" aria-live="polite">0/3 seleccionadas</p>
+        <div id="${config.prefix}-options" class="options-grid scrollable" role="group" aria-label="Opciones disponibles"></div>
         <button id="${config.prefix}-confirm" class="btn btn-primary" disabled>Confirmar</button>
-        <div id="${config.prefix}-partner-status" class="partner-status hidden">
+        <div id="${config.prefix}-partner-status" class="partner-status hidden" aria-live="polite">
           <span class="pulse-dot"></span>
           <span>El otro jugador est\u00E1 eligiendo...</span>
         </div>
@@ -79,6 +83,7 @@ function renderMG2(config) {
     const chip = document.createElement('button');
     chip.className = config.chipClass;
     chip.dataset.id = option.id;
+    chip.setAttribute('aria-pressed', 'false');
     chip.innerHTML = `<span class="chip-icon">${option.icon}</span><span class="chip-label">${option.label}</span>`;
     container.appendChild(chip);
   });
@@ -99,11 +104,13 @@ function setupMG2(config) {
 
     if (chip.classList.contains('selected')) {
       chip.classList.remove('selected');
+      chip.setAttribute('aria-pressed', 'false');
       state.currentSelections = state.currentSelections.filter((id) => id !== optionId);
       $(`${config.prefix}-options`).querySelectorAll('.chip').forEach((c) => c.classList.remove('disabled'));
     } else {
       if (state.currentSelections.length < 3) {
         chip.classList.add('selected');
+        chip.setAttribute('aria-pressed', 'true');
         state.currentSelections.push(optionId);
         if (state.currentSelections.length >= 3) {
           $(`${config.prefix}-options`).querySelectorAll('.chip').forEach((c) => {

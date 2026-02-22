@@ -32,6 +32,23 @@ export async function copyToClipboard(text) {
   }
 }
 
+let srAnnouncer = null;
+
+export function announceToScreenReader(message, priority = 'polite') {
+  if (!srAnnouncer) {
+    srAnnouncer = document.createElement('div');
+    srAnnouncer.className = 'sr-only';
+    srAnnouncer.setAttribute('aria-live', 'assertive');
+    srAnnouncer.setAttribute('aria-atomic', 'true');
+    document.body.appendChild(srAnnouncer);
+  }
+  srAnnouncer.setAttribute('aria-live', priority);
+  srAnnouncer.textContent = '';
+  requestAnimationFrame(() => {
+    srAnnouncer.textContent = message;
+  });
+}
+
 export function showToast(message, duration = 2500) {
   const existing = document.querySelector('.toast');
   if (existing) existing.remove();

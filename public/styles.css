@@ -352,7 +352,6 @@ body {
   color: var(--text-light);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  outline: none;
   transition: border-color 0.2s ease;
 }
 
@@ -391,7 +390,6 @@ body {
   color: var(--text-light);
   border: 2px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-full);
-  outline: none;
   transition: border-color 0.2s ease;
 }
 
@@ -1017,7 +1015,6 @@ input[type="range"] {
   height: 8px;
   background: var(--surface-dark);
   border-radius: 4px;
-  outline: none;
   cursor: pointer;
 }
 
@@ -1577,6 +1574,105 @@ input[type="range"]::-webkit-slider-runnable-track {
   animation: shake 0.4s ease;
 }
 
+/* ----- Screen Reader Only ----- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ----- Focus Visible (WCAG 2.4.7) ----- */
+
+:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.25);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: -2px;
+}
+
+.result-card:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+.input-code:focus-visible,
+.search-input:focus-visible,
+.name-input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 0;
+}
+
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 4px;
+}
+
+/* ----- Scroll Indicator (6.15) ----- */
+
+.options-grid.scrollable {
+  position: relative;
+}
+
+.scroll-fade-bottom {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(to top, var(--bg-dark), transparent);
+  pointer-events: none;
+  grid-column: 1 / -1;
+}
+
+/* ----- Reduced Motion (WCAG 2.3.3) ----- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn-pulse {
+    animation: none;
+  }
+
+  .result-card:not(.flipped) .result-card-inner {
+    animation: none;
+  }
+
+  .flip-hint-icon {
+    animation: none;
+  }
+
+  .pulse-dot {
+    animation: none;
+  }
+}
+
 /* ============================== */
 /* RESPONSIVE                     */
 /* ============================== */
@@ -1702,7 +1798,6 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-size: 1rem;
   text-align: center;
   margin-bottom: 12px;
-  outline: none;
   transition: border-color 0.2s;
 }
 

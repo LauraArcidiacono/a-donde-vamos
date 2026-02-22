@@ -4,7 +4,7 @@
 
 import { state, $ } from './state.js';
 import { PHASES } from '../data.js';
-import { haptic } from './utils.js';
+import { haptic, announceToScreenReader } from './utils.js';
 import { startTimerWarning, stopTimerWarning } from '../audio.js';
 
 // Cached DOM references — refreshed when prefix (phase) changes
@@ -67,10 +67,18 @@ export function updateTimerBar(prefix, remaining, total) {
           cachedTimerBarEl.classList.add('shake');
           haptic('heavy');
           startTimerWarning();
+          announceToScreenReader('Quedan 5 segundos', 'assertive');
           setTimeout(() => cachedTimerBarEl.classList.remove('shake'), 500);
         }
       } else if (remaining <= 10) {
         cachedFillEl.classList.add('timer-warning');
+        if (remaining === 10) {
+          announceToScreenReader('Quedan 10 segundos', 'polite');
+        }
+      }
+
+      if (remaining <= 0) {
+        announceToScreenReader('Se acab\u00F3 el tiempo', 'assertive');
       }
 
       if (remaining > 5 || remaining <= 0) {

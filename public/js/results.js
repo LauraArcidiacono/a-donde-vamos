@@ -18,17 +18,18 @@ export function createResultsTemplate() {
   const section = document.createElement('section');
   section.id = 'screen-results';
   section.className = 'screen';
+  section.setAttribute('aria-label', 'Resultados del juego');
   section.innerHTML = `
     <div class="screen-content results-content">
       <h2 class="results-title">\u00A1Resultados!</h2>
-      <div id="results-tabs" class="results-tabs">
-        <button class="tab active" data-tab="p1">Tu top</button>
-        <button class="tab" data-tab="p2">Su top</button>
-        <button class="tab" data-tab="combined">Combinado</button>
+      <div id="results-tabs" class="results-tabs" role="tablist" aria-label="Pesta\u00F1as de resultados">
+        <button class="tab active" data-tab="p1" role="tab" aria-selected="true" aria-controls="results-p1" id="tab-p1" tabindex="0">Tu top</button>
+        <button class="tab" data-tab="p2" role="tab" aria-selected="false" aria-controls="results-p2" id="tab-p2" tabindex="-1">Su top</button>
+        <button class="tab" data-tab="combined" role="tab" aria-selected="false" aria-controls="results-combined" id="tab-combined" tabindex="-1">Combinado</button>
       </div>
-      <div id="results-p1" class="results-panel active"></div>
-      <div id="results-p2" class="results-panel"></div>
-      <div id="results-combined" class="results-panel"></div>
+      <div id="results-p1" class="results-panel active" role="tabpanel" aria-labelledby="tab-p1"></div>
+      <div id="results-p2" class="results-panel" role="tabpanel" aria-labelledby="tab-p2"></div>
+      <div id="results-combined" class="results-panel" role="tabpanel" aria-labelledby="tab-combined"></div>
       <div id="results-coincidences" class="results-coincidences"></div>
       <details id="results-penalties" class="results-penalties">
         <summary>Ajustes por tus \u00ABno quiero\u00BB</summary>
@@ -37,7 +38,7 @@ export function createResultsTemplate() {
       <div class="results-actions">
         <button id="btn-rematch" class="btn btn-primary">Revancha</button>
         <button id="btn-share-results" class="btn btn-secondary btn-small">
-          <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
             <polyline points="16 6 12 2 8 6"/>
             <line x1="12" y1="2" x2="12" y2="15"/>
@@ -206,8 +207,23 @@ function renderResultsPanel(panelId, cities, coincidences) {
     hint.innerHTML = 'Toca para ver m\u00E1s info <span class="flip-hint-icon">\u2192</span>';
     front.appendChild(hint);
 
-    card.addEventListener('click', () => {
-      card.classList.toggle('flipped');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${city.name || entry.cityId} - Toca para ver m\u00E1s info`);
+
+    const toggleFlip = () => {
+      const isFlipped = card.classList.toggle('flipped');
+      card.setAttribute('aria-label', isFlipped
+        ? `${city.name || entry.cityId} - Toca para volver`
+        : `${city.name || entry.cityId} - Toca para ver m\u00E1s info`);
+    };
+
+    card.addEventListener('click', toggleFlip);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleFlip();
+      }
     });
 
     panel.appendChild(card);
@@ -285,19 +301,48 @@ function setupResultsTabs() {
   const tabContainer = $('results-tabs');
   if (!tabContainer) return;
 
-  const tabs = tabContainer.querySelectorAll('.tab');
+  const tabs = tabContainer.querySelectorAll('[role="tab"]');
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       haptic();
       activateTab(tab.dataset.tab);
     });
   });
+
+  tabContainer.addEventListener('keydown', (e) => {
+    const tabList = Array.from(tabs);
+    const current = tabList.findIndex((t) => t === document.activeElement);
+    if (current === -1) return;
+
+    let next = -1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      next = (current + 1) % tabList.length;
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      next = (current - 1 + tabList.length) % tabList.length;
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      next = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      next = tabList.length - 1;
+    }
+
+    if (next >= 0) {
+      activateTab(tabList[next].dataset.tab);
+      tabList[next].focus();
+    }
+  });
 }
 
 function activateTab(tabName) {
-  const tabs = $('results-tabs').querySelectorAll('.tab');
+  const tabs = $('results-tabs').querySelectorAll('[role="tab"]');
   tabs.forEach((t) => {
-    t.classList.toggle('active', t.dataset.tab === tabName);
+    const isActive = t.dataset.tab === tabName;
+    t.classList.toggle('active', isActive);
+    t.setAttribute('aria-selected', String(isActive));
+    t.setAttribute('tabindex', isActive ? '0' : '-1');
   });
 
   const panelMap = { p1: 'results-p1', p2: 'results-p2', combined: 'results-combined' };

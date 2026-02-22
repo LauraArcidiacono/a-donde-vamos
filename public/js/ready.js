@@ -17,22 +17,23 @@ export function createReadyTemplate() {
   const section = document.createElement('section');
   section.id = 'screen-ready';
   section.className = 'screen';
+  section.setAttribute('aria-label', 'Sala de espera - Listos para jugar');
   section.innerHTML = `
     <div class="screen-content ready-content">
       <h2 class="screen-heading">\u00A1Jugador conectado!</h2>
       <p class="screen-subheading">Preparados para empezar</p>
-      <div class="ready-indicators">
+      <div class="ready-indicators" role="status" aria-label="Estado de los jugadores">
         <div class="ready-player">
-          <div id="p1-ready" class="ready-dot"></div>
+          <div id="p1-ready" class="ready-dot" aria-hidden="true"></div>
           <span class="ready-player-label"><span id="p1-name">Jugador 1</span></span>
         </div>
         <div class="ready-player">
-          <div id="p2-ready" class="ready-dot"></div>
+          <div id="p2-ready" class="ready-dot" aria-hidden="true"></div>
           <span class="ready-player-label"><span id="p2-name">Jugador 2</span></span>
         </div>
       </div>
       <button id="btn-ready" class="btn btn-primary btn-pulse">\u00A1Estoy listo!</button>
-      <div id="countdown-overlay" class="countdown-overlay hidden">
+      <div id="countdown-overlay" class="countdown-overlay hidden" role="status" aria-live="assertive" aria-label="Cuenta atr\u00E1s">
         <span class="countdown-number"></span>
       </div>
     </div>`;

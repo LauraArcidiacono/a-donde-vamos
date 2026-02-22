@@ -7,7 +7,7 @@ import { state, $ } from './state.js';
 import { MSG, PHASES } from '../data.js';
 import { initAudio, requestMusicStop, stopTimerWarning } from '../audio.js';
 import { connectWS, send, setMessageHandler } from './ws.js';
-import { createOverlayTemplates, showScreen, showError, showDisconnectOverlay, hideDisconnectOverlay, updateDisconnectCountdown, showAborted } from './screens.js';
+import { createOverlayTemplates, showScreen, showError, showDisconnectOverlay, hideDisconnectOverlay, hideErrorOverlay, updateDisconnectCountdown, showAborted } from './screens.js';
 import { haptic } from './utils.js';
 import { handleTimerTick, handleTimerExtended } from './timers.js';
 import { createLobbyTemplates, setupLobby, handleRoomCreated, handlePlayerJoined } from './lobby.js';
@@ -143,7 +143,7 @@ function handleURLParams() {
 function setupErrorOverlay() {
   $('btn-back-lobby').addEventListener('click', () => {
     haptic();
-    $('overlay-error').classList.add('hidden');
+    hideErrorOverlay();
 
     requestMusicStop();
     stopTimerWarning();

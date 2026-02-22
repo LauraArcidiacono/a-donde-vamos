@@ -11,20 +11,21 @@ export function createMiniGame3Template() {
   const section = document.createElement('section');
   section.id = 'screen-mg3';
   section.className = 'screen';
+  section.setAttribute('aria-label', 'Ronda 3 - Ajuste fino');
   section.innerHTML = `
     <div class="screen-content game-content">
       <div class="game-header">
         <span class="phase-indicator">Ronda 3/3 \u2014 Prioridades</span>
       </div>
-      <div class="timer-container">
+      <div class="timer-container" role="timer" aria-label="Tiempo restante">
         <div id="mg3-timer-bar" class="timer-bar">
           <div class="timer-bar-fill" style="width: 100%"></div>
         </div>
-        <span id="mg3-timer" class="timer-number">40</span>
+        <span id="mg3-timer" class="timer-number" aria-live="off">40</span>
       </div>
       <div id="mg3-sliders" class="sliders-container"></div>
       <button id="mg3-confirm" class="btn btn-primary">Confirmar</button>
-      <div id="mg3-partner-status" class="partner-status hidden">
+      <div id="mg3-partner-status" class="partner-status hidden" aria-live="polite">
         <span class="pulse-dot"></span>
         <span>El otro jugador est\u00E1 ajustando...</span>
       </div>
